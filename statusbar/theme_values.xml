@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<MIUI_Theme_Values template="LightTemplate">
+<color name="cc_qs_tile_icon_color">#ffffffff</color>
+<color name="qs_control_big_tile_white_bg">#ffffffff</color>
+<color name="qs_control_tile_icon_enable_color">#ff3d84ff</color>
+<color name="cc_qs_tile_icon_bg_color_active_battery_related">#ffffa133</color>
+<color name="qs_control_tile_icon_disabled_color">#99ffffff</color>
+<color name="qs_control_tiles_expand_indicator_color">#ffffffff</color>
+<color name="qs_control_brightness_progress_color">#ffffffff</color>
+<color name="cc_qs_tile_icon_bg_color_active">#ffffffff</color>
+<color name="qs_control_header_tiles_title_color">#ffffffff</color>
+<color name="qs_control_header_settings_color">#ffffffff</color>
+<color name="qs_control_tile_label_text_color">#ffffffff</color>
+<color name="qs_control_expand_tile_title_color">#7f000000</color>
+<bool name="battery_meter_use_legacy_drawable">true</bool>
+<color name="qs_control_header_edit_color">#ffffffff</color>
+<color name="qs_control_big_tile_blue_bg">#ff3d84ff</color>
+<color name="qs_control_big_tile_title_color_off">#ffffffff</color>
+<color name="mini_window_bar_color">#ffffffff</color>
+<color name="qs_control_big_tile_sub_title_color">#ccffffff</color>
+<color name="cc_qs_tile_icon_bg_color_active_auto_brightness">#ff3d84ff</color>
+<color name="qs_control_expand_tile_sub_title_color">#ff000000</color>
+<color name="qs_control_big_tile_title_color">#ffffffff</color>
+<color name="qs_control_tile_text_unavailable_color">#4dffffff</color>
+<color name="qs_control_header_date_color">#ffffffff</color>
+<color name="qs_control_big_tile_sub_title_color_off">#99ffffff</color>
+<dimen name="statusbar_battery_digit_size">0dp</dimen>
+<color name="qs_control_tile_icon_unavailable_color">#33ffffff</color>
+<color name="cc_qs_tile_icon_color_off">#ffffffff</color>
+<color name="qs_control_big_tile_green_bg">#fff4a91f</color>
+<color name="qs_control_expand_tile_unit_color">#b3000000</color>
+<color name="qs_control_header_clock_color">#ffffffff</color>
+<color name="qs_brightness_background_color">#7fffffff</color>
+</MIUI_Theme_Values>

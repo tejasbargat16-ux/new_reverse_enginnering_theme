@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<MIUI_Theme_Values >
+
+<drawable name="edit_group_d_light.png">group.png</drawable>
+<drawable name="edit_group_n_light.png">group.png</drawable>
+<drawable name="edit_group_p_light.png">group.png</drawable>
+
+<drawable name="edit_group_d_dark.png">groupd.png</drawable>
+<drawable name="edit_group_n_dark.png">groupd.png</drawable>
+<drawable name="edit_group_p_dark.png">groupd.png</drawable>
+
+
+<drawable name="trash_dark.png">cestinod.png</drawable>
+<drawable name="edit_trash_p_dark.png">cestinod.png</drawable>
+<drawable name="edit_trash_n_dark.png">cestinod.png</drawable>
+
+<drawable name="edit_trash_p_light.png">cestino.png</drawable>
+<drawable name="edit_trash_n_light.png">cestino.png</drawable>
+<drawable name="trash.png">cestino.png</drawable>
+</MIUI_Theme_Values>

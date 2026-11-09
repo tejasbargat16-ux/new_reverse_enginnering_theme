@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--创意视觉设计Kronos-->
+<!--技术支持MonetCarlos-->
+<!--未经允许禁止抄袭，站外二改需注明来源-->
+<Clock
+	version="1"
+	type="awesome"
+	screenWidth="1080"
+	frameRate="0"
+	useVariableUpdater="battery_state,DateTime.Second"
+	useHardwareCanvas="true">
+
+	<!--外部命令-->
+	<ExternalCommands>
+		<!--初始化复位-->
+		<Trigger action="init,resume">
+			<!--接口在切屏时必须主动更新一次-->
+			<BinderCommand
+				name="WeatherProvider"
+				command="refresh" />
+			<!--静音数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_ringer"
+				command="refresh" />
+			<!--蓝牙数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_bluetooth"
+				command="refresh" />
+			<!--飞行模式数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_airplane"
+				command="refresh" />
+			<!--手电筒数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_torch"
+				command="refresh" />
+			<!--wifi数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_wifi"
+				command="refresh" />
+			<!--蜂窝数据接口刷新-->
+			<BinderCommand
+				name="globalProvider_data"
+				command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+
+	<!--变量绑定-->
+	<VariableBinders>
+		<!--获取手电筒状态-->
+		<ContentProviderBinder
+			name="globalProvider_torch"
+			uri="content://settings/global"
+			where="name='torch_state'"
+			countName="hasGlobal_torch">
+			<Variable
+				name="sdt_state"
+				type="int"
+				column="value" />
+		</ContentProviderBinder>
+		<!--获取蓝牙状态-->
+		<ContentProviderBinder
+			name="globalProvider_bluetooth"
+			uri="content://settings/global"
+			where="name='bluetooth_on'"
+			countName="hasGlobal_bluetooth">
+			<Variable
+				name="bluetooth_state"
+				type="int"
+				column="value" />
+		</ContentProviderBinder>
+		<!--获取wifi状态-->
+		<ContentProviderBinder
+			name="globalProvider_wifi"
+			uri="content://settings/global"
+			where="name='wifi_on'"
+			countName="hasGlobal_wifi">
+			<Variable
+				name="wifi_state"
+				type="int"
+				column="value" />
+		</ContentProviderBinder>
+		<!--获取蜂窝数据状态-->
+		<ContentProviderBinder
+			name="globalProvider_data"
+			uri="content://settings/global"
+			where="name='mobile_data0'"
+			countName="hasGlobal_data">
+			<Variable
+				name="data_state"
+				type="int"
+				column="value" />
+		</ContentProviderBinder>
+		<!--获取飞行模式状态-->
+		<ContentProviderBinder
+			name="globalProvider_airplane"
+			uri="content://settings/global"
+			where="name='airplane_mode_on'"
+			countName="hasGlobal_airplane">
+			<Variable
+				name="airplane_state"
+				type="int"
+				column="value" />
+		</ContentProviderBinder>
+		<!--天气内容提供商-->
+		<ContentProviderBinder
+			name="WeatherProvider"
+			uri="content://weather/actualWeatherData/1"
+			columns="city_id,city_name,weather_type,aqilevel,description,temperature,tmphighs,tmplows,sunrise,sunset"
+			countName="hasweather">
+			<!--城市id-->
+			<Variable
+				name="weather_city_id"
+				type="string"
+				column="city_id" />
+			<!--城市名称-->
+			<Variable
+				name="weather_location"
+				type="string"
+				column="city_name" />
+			<!--天气类型（实时）：0-->
+			<Variable
+				name="weather_id"
+				type="int"
+				column="weather_type" />
+			<Variable
+				name="weather_type"
+				type="string[]"
+				column="weather_type" />
+			<!--温度（实时）：35℃-->
+			<Variable
+				name="weather_temperature"
+				type="int"
+				column="temperature"
+				row="0" />
+			<Variable
+				name="weather_temperature"
+				type="string"
+				column="temperature" />
+			<!--空气指数-->
+			<Variable
+				name="_quality"
+				type="int"
+				column="aqilevel" />
+			<!--日出时间-->
+			<Variable
+				name="weather_sunrise"
+				type="int"
+				column="sunrise" />
+			<!--日落时间-->
+			<Variable
+				name="weather_sunset"
+				type="int"
+				column="sunset" />
+			<!--天气现象（实时）：晴-->
+			<Variable
+				name="weather_description"
+				type="string"
+				column="description" />
+			<!--最高温度~最低温度-->
+			<Variable
+				name="weather_temphigh"
+				type="string[]"
+				column="tmphighs" />
+			<Variable
+				name="weather_templow"
+				type="string[]"
+				column="tmplows" />
+			<Trigger>
+				<!--空气质量-->
+				<VariableCommand
+					name="_quality"
+					type="string"
+					expression="ifelse(#weather_aqi{=50,'Excellent',#weather_aqi{=100,'Good',#weather_aqi{=150,'Polluted',#weather_aqi{=200,'Pollution',#weather_aqi{=300,'Polluted',#weather_aqi}300,'Polluted','Excellent')" />
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<!--占位预设变量-->
+	<Var
+		name="weather_description"
+		type="string"
+		expression="ifelse(strIsEmpty(@weather_description),'unknown',@weather_description)"
+		persist="true" />
+
+	<!--自适应动态缩放布局-->
+	<Group
+		alignV="center"
+		align="center"
+		pivotX="1000/2"
+		pivotY="440/2"
+		x="#view_width/2"
+		y="#view_height/2"
+		w="980"
+		h="440"
+		scale="min(#view_width/1000,#view_height/440)"
+		layered="true">
+		<!--背景-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/w_0.png'"
+			antiAlias="true" />
+		<!--背景-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/w_1.png'"
+			antiAlias="true"
+			visibility="#__darkmode" />
+		<!--底部小白条图形-->
+		<Rectangle
+			align="center"
+			alignV="bottom"
+			x="980/2"
+			y="440-15"
+			w="130"
+			h="10"
+			fillColor="#ffffff"
+			alpha="99"
+			cornerRadius="99" />
+		<!--底部小白条触控区域-->
+		<Button
+			align="center"
+			alignV="bottom"
+			x="980/2"
+			y="440"
+			w="130"
+			h="50"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.miui.home"
+						class="com.miui.home.recents.RecentsActivity" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--蓝牙磁贴开启-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/t_0.png'"
+			antiAlias="true"
+			visibility="#bluetooth_state!=0" />
+		<!--蓝牙触控区域-->
+		<Button
+			x="595"
+			y="83"
+			w="126"
+			h="126"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.settings"
+						class="com.android.settings.bluetooth.BluetoothSettings" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--手电筒磁贴开启-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/t_1.png'"
+			antiAlias="true"
+			visibility="#sdt_state" />
+		<!--手电筒触控区域-->
+		<Button
+			x="752"
+			y="83"
+			w="126"
+			h="126"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<Command
+						target="sdt_state"
+						value="toggle" />
+					<VariableCommand
+						name="sdt_state"
+						expression="!(#sdt_state)"
+						condition="int(@__miui_version_code)}=8" />
+					<IntentCommand
+						action="miui.intent.action.TOGGLE_TORCH"
+						broadcast="true">
+						<Extra
+							name="miui.intent.extra.IS_ENABLE"
+							type="boolean"
+							expression="ifelse(int(@__miui_version_code)}=8,#sdt_state,1)" />
+					</IntentCommand>
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--wifi磁贴开启-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/t_2.png'"
+			antiAlias="true"
+			visibility="#wifi_state!=0" />
+		<!--wifi触控区域-->
+		<Button
+			x="595"
+			y="246"
+			w="126"
+			h="126"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.settings"
+						class="com.android.settings.wifi.WifiSettings" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--数据流量磁贴开启-->
+		<Image
+			w="980"
+			h="440"
+			srcExp="'bg/t_3.png'"
+			antiAlias="true"
+			visibility="#data_state**!#airplane_state" />
+		<!--数据流量触控区域-->
+		<Button
+			x="752"
+			y="246"
+			w="126"
+			h="126"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.settings"
+						class="com.android.settings.Settings$MobileNetworkActivity" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--左侧时间-->
+		<DateTime
+			name="m_clock"
+			alignV="center"
+			x="96"
+			y="94"
+			size="76"
+			bold="true"
+			color="#ffffff"
+			alpha="255"
+			formatExp="ifelse(#time_format,&apos;HH:mm&apos;,&apos;hh:mm&apos;)" />
+		<!--时间触发区域-->
+		<Button
+			name="clock_button"
+			alignV="center"
+			x="96"
+			y="94"
+			w="#m_clock.text_width+50"
+			h="#m_clock.text_height"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.deskclock"
+						class="com.android.deskclock.DeskClockTabActivity" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--星期-->
+		<DateTime
+			name="m_week"
+			align="left"
+			alignV="center"
+			x="98"
+			y="165"
+			size="44"
+			bold="true"
+			format="EEEE"
+			color="#ffffff"
+			alpha="225" />
+		<!--日历触发区域-->
+		<Button
+			alignV="center"
+			x="98"
+			y="165"
+			w="#m_week.text_width+50"
+			h="#m_week.text_height"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.calendar"
+						class="com.android.calendar.AllInOneActivity" />
+
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--左侧天气大温度-->
+		<Text
+			name="m_wt"
+			align="left"
+			x="96"
+			y="238"
+			w="258"
+			marqueeSpeed="30"
+			size="120"
+			color="#ffffff"
+			textExp="#weather_temperature+'°'" />
+		<!--左侧天气大温度触发区域-->
+		<Button
+			align="left"
+			x="96"
+			y="238"
+			w="#m_wt.text_width+50"
+			h="#m_wt.text_height"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						class="com.miui.weather2.ActivityWeatherMain"
+						package="com.miui.weather2" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--几月几日-->
+		<DateTime
+			alignV="center"
+			x="332"
+			y="94"
+			size="42"
+			bold="true"
+			format="MM / dd"
+			color="#ffffff"
+			alpha="225" />
+		<!--农历几月几日-->
+		<DateTime
+			alignV="center"
+			x="332"
+			y="155"
+			size="42"
+			bold="true"
+			format="MMMM"
+			color="#ffffff"
+			alpha="225" />
+		<!--农历触发区域-->
+		<Button
+			alignV="center"
+			x="332"
+			y="116"
+			w="200"
+			h="124"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						package="com.android.calendar"
+						class="com.android.calendar.AllInOneActivity" />
+
+				</Trigger>
+			</Triggers>
+		</Button>
+		<!--中间最高温度-->
+		<Text
+			alignV="center"
+			x="342"
+			y="274"
+			w="214"
+			marqueeSpeed="30"
+			size="46"
+			color="#ffffff"
+			textExp="'High '+@weather_temphigh[0]+'°'" />
+		<!--中间最低温度-->
+		<Text
+			alignV="center"
+			x="342"
+			y="344"
+			w="214"
+			marqueeSpeed="30"
+			size="46"
+			color="#ffffff"
+			textExp="'Low  '+@weather_templow[0]+'°'" />
+		<!--中间最高最低温度触发区域-->
+		<Button
+			alignV="center"
+			x="342"
+			y="304"
+			w="220"
+			h="124"
+			touchable="true"
+			haptic="true">
+			<Triggers>
+				<Trigger action="up">
+					<IntentCommand
+						action="android.intent.action.MAIN"
+						class="com.miui.weather2.ActivityWeatherMain"
+						package="com.miui.weather2" />
+				</Trigger>
+			</Triggers>
+		</Button>
+	</Group>
+
+</Clock>

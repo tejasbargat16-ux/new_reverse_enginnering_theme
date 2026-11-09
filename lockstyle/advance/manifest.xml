@@ -1,0 +1,2401 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<Lockscreen version="1" frameRate="120"  displayDesktop="true" vibrate="false" screenWidth="1080"  >
+	<ExternalCommands>
+		 <Trigger action="resume">
+			<BinderCommand name="WeatherProvider" command="refresh" />
+			<BinderCommand name="DeskClockProvider" command="refresh" />
+			<BinderCommand name="getWearableAndHeadSetData" command="refresh" />
+			<BinderCommand name="clockProvider" command="refresh" />
+			<BinderCommand name="MiSteps" command="refresh" />
+			<VariableCommand name="lightSwitch" expression="0"  persist="true"/>
+			<VariableCommand name="setting" expression="0"  persist="true"/>
+			<AnimationCommand target="long_Press" command="play(0,0)"/>
+			<Command target="top_an.animation" value="play"/>
+			<AnimationCommand command="play(0,400)"  target="speed_box1" condition="eq(#box1,2)*eq(#speed_box1,0)"/>
+			<AnimationCommand command="play(0,400)"  target="speed_box3" condition="eq(#box3,1)*eq(#speed_box3,0)"/>
+			<AnimationCommand command="play(0,400)"  target="speed_box7" condition="eq(#box7,1)*eq(#speed_box7,0)"/>
+			
+			<Command target="time1.animation" value="play"/>
+			<Command target="time2.animation" value="play"/>
+			<Command target="time3.animation" value="play"/>
+		</Trigger>
+		 <Trigger action="pause">
+			<IntentCommand action="sendbg" broadcast="true">
+				<Extra name="bgBlock" type="number" expression="#bg" />
+				<Extra name="scenerymd" type="number" expression="#sceneryBg" />
+				<Extra name="vaguemd" type="number" expression="#vagueBg" />
+				<Extra name="desktopmd" type="number" expression="#desktopBg" />
+				<Extra name="dockYset" type="number" expression="#dockY" />
+			</IntentCommand>
+		</Trigger>
+	</ExternalCommands>
+	<Var name="notification" expression="1"/>
+	<Var name="misoperation" expression="le(abs(#touch_x-#touch_begin_x),35)*le(abs(#touch_y-#touch_begin_y),35)"/>
+	<Var name="w" expression="#screen_width"/> 
+	<Var name="h" expression="#screen_height"/>
+	<Var name="sh" expression="ifelse(gt(#h,2400),240+(#h-2400),(#h-1920)/2)"/>
+	<Var name="hour_set" expression="ifelse(gt(#hour,12),#hour,#hour24)"/>
+	<Var name="surH" expression="23-#hour_set"/>
+	<Var name="surM" expression="59-#minute"/>
+	<Var name="surS" expression="59-#second"/>
+	<Var name="leapYear" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" />
+	<Var name="maxMonth" expression="ifelse(eq(#month+1,1)+eq(#month+1,3)+eq(#month+1,5)+eq(#month+1,7)+eq(#month+1,8)+eq(#month+1,10)+eq(#month+1,12),31,eq(#month+1,2),28+#leapYear,30)"/>
+	<Var name="lastMonth" expression="ifelse(eq(#month+1,2)+eq(#month+1,4)+eq(#month+1,6)+eq(#month+1,8)+eq(#month+1,9)+eq(#month+1,11)+eq(#month+1,1),31,eq(#month+1,3),28+#leapYear,30)"/>
+	<Var name="yue" expression="#maxMonth-#date"/>
+	<Var name="lastDay" expression="gt(#month+1,1)*31+(28+#leapYear)*gt(#month+1,2)+gt(#month+1,3)*31+gt(#month+1,4)*30+gt(#month+1,5)*31+gt(#month+1,6)*30+gt(#month+1,7)*31+gt(#month+1,8)*31+gt(#month+1,9)*30+gt(#month+1,10)*31+gt(#month+1,11)*30+gt(#month+1,12)*31+#date"/>
+	<Var name="surYear" expression="365+#leapYear-#lastDay"/>
+	<Var name="surWeek" expression="ifelse(eq(#day_of_week-1,0),0,eq(#day_of_week-1,6),0,7-#day_of_week)"/>
+	<Var name="rCount" expression="int((#surH*60*60+#surM*60+#surS)/86400*100)"/>
+	<Var name="yCount" expression="int((#yue*24*60*60+#surH*60*60+#surM*60+#surS)/((#maxMonth)*86400)*100)"/>
+	<Var name="nCount" expression="int((#surYear*24*60*60+#surH*60*60+#surM*60+#surS)/((365+#leapYear)*86400)*100)"/>
+	<Var name="zCount" expression="int((#surWeek*86400+#surH*60*60+#surM*60+#surS)/604800*100)"/>
+	
+	
+	<Var name="bgImg" type="string" expression="ifelse(strContains(@bg_img,'com.android.fileexplorer'),strReplaceAll(@bg_img,'content://com.android.fileexplorer.myprovider/external_files/','file:///sdcard/'),strContains(@bg_img,'com.miui.gallery'),strReplaceAll(@bg_img,'content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2F','file:///sdcard/'),@bg_img)" />
+	<Var name="bgImg2" type="string" expression="ifelse(strContains(@bg_img2,'com.android.fileexplorer'),strReplaceAll(@bg_img2,'content://com.android.fileexplorer.myprovider/external_files/','file:///sdcard/'),strContains(@bg_img2,'com.miui.gallery'),strReplaceAll(@bg_img2,'content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2F','file:///sdcard/'),@bg_img2)" />
+	<Var name="scenery_scale" expression="ifelse((#h/#sceneryImg.bmp_height)}(#w/#sceneryImg.bmp_width),#h/#sceneryImg.bmp_height,#w/#sceneryImg.bmp_width)-1" />
+	<!-- 背景 -->
+	<Var name="ba_scale" expression="ifelse((#h/#bg1.bmp_height)}(#w/#bg1.bmp_width),#h/#bg1.bmp_height,#w/#bg1.bmp_width)-1" />
+	<!-- Custom背景 -->
+	<Var name="be_scale" expression="ifelse((#h/#bg2.bmp_height)}(#w/#bg2.bmp_width),#h/#bg2.bmp_height,#w/#bg2.bmp_width)-1" />
+	<!-- Custom景深背景 -->
+	<Var name="bg_scale" expression="ifelse((#h/#bg3.bmp_height)}(#w/#bg3.bmp_width),#h/#bg3.bmp_height,#w/#bg3.bmp_width)-1" />
+	
+	<Var name="box1_x" expression="ifelse((#h/#bg3.bmp_height)}(#w/#bg3.bmp_width),#h/#bg3.bmp_height,#w/#bg3.bmp_width)-1" />
+	
+	
+	<Var name="mox" expression="#touch_x-#touch_begin_x" />
+	<Var name="moy" expression="#touch_y-#touch_begin_y" />
+	<!-- 是否Custom -->
+	<Var name="custom_bg" expression="0"  persist="true" const="true"/> 
+	<!-- 是否模糊 -->
+	<Var name="vagueBg" expression="0"  persist="true" const="true"/>
+	<!-- 是否景深 -->
+	<Var name="sceneryBg" expression="0"  persist="true" const="true"/>
+	
+	<Var name="bg" expression="0"  persist="true" const="true"/>
+	<!-- 玻璃质感 -->
+	<Var name="glass" expression="0"  persist="true" const="true"/>
+	
+	<!-- 文字设置颜色 -->
+	<Var name="site1"   expression="880" const="true" persist="true"/>
+	<Var name="site2"   expression="880" const="true" persist="true"/>
+	<Var name="site3"   expression="880" const="true" persist="true"/>
+	<Var name="site4"   expression="880" const="true" persist="true"/>
+	<Var name="redX"    expression="ifelse(#color1*eq(#colorSet,0),ifelse(ge(#site1+#mox,880),880,le(#site1+#mox,0),0,#site1+#mox),#site1)" />
+	<Var name="greenX"  expression="ifelse(#color2*eq(#colorSet,0),ifelse(ge(#site2+#mox,880),880,le(#site2+#mox,0),0,#site2+#mox),#site2)" />
+	<Var name="blueX"   expression="ifelse(#color3*eq(#colorSet,0),ifelse(ge(#site3+#mox,880),880,le(#site3+#mox,0),0,#site3+#mox),#site3)" />
+	<Var name="alphaX"  expression="ifelse(#color4*eq(#colorSet,0),ifelse(ge(#site4+#mox,880),880,le(#site4+#mox,0),0,#site4+#mox),#site4)" />
+	<Var name="customR"  expression="int(255*(#redX/880))" />
+	<Var name="customG"  expression="int(255*(#greenX/880))" />
+	<Var name="customB"  expression="int(255*(#blueX/880))" />
+	<Var name="customA"  expression="int(255*(#alphaX/880))" />
+	
+	<!-- 组件 -->
+	<Var name="module1"   expression="880" const="true" persist="true"/>
+	<Var name="module2"   expression="880" const="true" persist="true"/>
+	<Var name="module3"   expression="880" const="true" persist="true"/>
+	<Var name="module4"   expression="88" const="true" persist="true"/>
+	<Var name="redY"    expression="ifelse(#color1*eq(#colorSet,1),ifelse(ge(#module1+#mox,880),880,le(#module1+#mox,0),0,#module1+#mox),#module1)" />
+	<Var name="greenY"  expression="ifelse(#color2*eq(#colorSet,1),ifelse(ge(#module2+#mox,880),880,le(#module2+#mox,0),0,#module2+#mox),#module2)" />
+	<Var name="blueY"   expression="ifelse(#color3*eq(#colorSet,1),ifelse(ge(#module3+#mox,880),880,le(#module3+#mox,0),0,#module3+#mox),#module3)" />
+	<Var name="alphaY"  expression="ifelse(#color4*eq(#colorSet,1),ifelse(ge(#module4+#mox,880),880,le(#module4+#mox,0),0,#module4+#mox),#module4)" />
+	<Var name="moduleR"  expression="int(255*(#redY/880))" />
+	<Var name="moduleG"  expression="int(255*(#greenY/880))" />
+	<Var name="moduleB"  expression="int(255*(#blueY/880))" />
+	<Var name="moduleA"  expression="int(255*(#alphaY/880))" />
+	
+	<!-- 遮罩颜色 -->
+	<Var name="setys1"   expression="880" const="true" persist="true"/>
+	<Var name="setys2"   expression="880" const="true" persist="true"/>
+	<Var name="setys3"   expression="880" const="true" persist="true"/>
+	<Var name="setys4"   expression="880" const="true" persist="true"/>
+	<Var name="reds"    expression="ifelse(#color1*eq(#colorSet,2),ifelse(ge(#setys1+#mox,880),880,le(#setys1+#mox,0),0,#setys1+#mox),#setys1)" />
+	<Var name="greens"  expression="ifelse(#color2*eq(#colorSet,2),ifelse(ge(#setys2+#mox,880),880,le(#setys2+#mox,0),0,#setys2+#mox),#setys2)" />
+	<Var name="blues"   expression="ifelse(#color3*eq(#colorSet,2),ifelse(ge(#setys3+#mox,880),880,le(#setys3+#mox,0),0,#setys3+#mox),#setys3)" />
+	<Var name="alphas"  expression="ifelse(#color4*eq(#colorSet,2),ifelse(ge(#setys4+#mox,880),880,le(#setys4+#mox,0),0,#setys4+#mox),#setys4)" />
+	<Var name="setClocrR"  expression="int(255*(#reds/880))" />
+	<Var name="setClocrG"  expression="int(255*(#greens/880))" />
+	<Var name="setClocrB"  expression="int(255*(#blues/880))" />
+	<Var name="setClocrA"  expression="int(255*(#alphas/880))" />
+	
+	<Var name="boxy"   expression="0" const="true" persist="true"/>
+	<Var name="topx"   expression="410" const="true" persist="true"/>
+	<Var name="topy"   expression="0" const="true" persist="true"/>
+	<Var name="box_Y"    expression="ifelse(#boxdown,ifelse(ge(#boxy+#mox,709),709,le(#boxy+#mox,0),0,#boxy+#mox),#boxy)" />
+	<Var name="top_X"    expression="ifelse(#topXdown,ifelse(ge(#topx+#mox,820),820,le(#topx+#mox,0),0,#topx+#mox),#topx)" />
+	<Var name="top_Y"    expression="ifelse(#topYdown,ifelse(ge(#topy+#mox,820),820,le(#topy+#mox,0),0,#topy+#mox),#topy)" />
+	<Var name="topSetX"  expression="int((#w-360)*(#top_X/820))" />
+	
+	
+	
+	<Var name="box1"   expression="2" const="true" persist="true"/>
+	<Var name="box3"   expression="1" const="true" persist="true"/>
+	<Var name="box7"   expression="1" const="true" persist="true"/>
+	<Var name="except1" expression="0" const="true" persist="true"/>
+	<Var name="except3" expression="2" const="true" persist="true"/>
+	<Var name="except7" expression="3" const="true" persist="true"/>
+	<Var name="boxSet" expression="#box1+#box2+#box3+#box4+#box5+#box6+#box7+#box8+#box9+#box10+#box11+#box12+#box13+#box14+#box15+#box16+#box17+#box18" persist="true"/>
+	
+	<Var name="timeSety"  expression="330" const="true" persist="true"/>
+	<Var name="time0_H"  expression="ifelse(#timedown*eq(#timeys,0),ifelse(ge(#timeSety+#moy,330),330,le(#timeSety+#moy,-300),-300,#timeSety+#moy),#timeSety)" />
+	
+	<!-- 组件 -->
+	<Var name="speed_box1">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box1,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box2">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box2,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box3">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box3,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box4">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box4,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box5">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box5,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box6">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box6,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box7">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box7,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box8">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box8,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box9">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box9,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box10">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box10,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box11">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box11,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box12">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box12,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box13">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box13,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box14">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box14,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box15">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box15,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box16">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box16,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box17">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box17,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<Var name="speed_box18">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#speed_box18,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	
+	<Var name="long_Press">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame easeType="SineEaseOut" time="0" value="0"/>
+			<AniFrame easeType="SineEaseOut" time="400" value="1"/>
+			<AniFrame time="800" value="0"/>
+			<Triggers>
+				<Trigger action="end" condition="eq(#long_Press,1)">
+					<ExternCommand command="__clearResource" />
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	
+	<Var name="set_an"> 
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="0"/>
+			<AniFrame time="200" value="150"/>
+		</VariableAnimation>
+	</Var>
+	
+	<Var name="sz_an">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="800" easeType="CubicEaseOut" />
+			<AniFrame time="400" value="0"/>
+		</VariableAnimation>
+	</Var>
+	
+	<Var name="top_an">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="8" easeType="BackEaseOut" />
+			<AniFrame time="400" value="12" easeType="BackEaseOut"/>
+			<AniFrame time="600" value="10"/>
+		</VariableAnimation>
+	</Var>
+	    
+
+	<VariableBinders>
+		<ContentProviderBinder name="WeatherProvider" uri="content://weather/actualWeatherData/1" columns="city_id,city_name,weather_type,aqilevel,description,temperature,tmphighs,tmplows,wind,humidity,sunrise,sunset,pressure,weathernamesfrom,somatosensory,kinect" countName="hasweather">
+			<Variable name="city_id" type="string" column="city_id" />
+			<Variable name="weather_location" type="string" column="city_name" />
+			<Variable name="weather_id" type="int" column="weather_type" />
+			<Variable name="weather_type" type="string[]" column="weather_type" />
+			<Variable name="weather_temperature" type="string" column="temperature" />
+			<Variable name="weather_description" type="string" column="description" />
+			<Variable name="weather_sunrise" type="int" column="sunrise" />
+			<Variable name="weather_sunset" type="int" column="sunset" />
+			<Variable name="weather_wind" type="string" column="wind" />
+			<Variable name="weather_pressure" type="int" column="pressure" />
+			<Variable name="weather_humidity" type="int" column="humidity" />
+			<Variable name="weather_weathernamesfrom" type="string[]" column="weathernamesfrom" />
+			<Variable name="weather_temphigh" type="string[]" column="tmphighs" />
+			<Variable name="weather_templow" type="string[]" column="tmplows" />
+			<Variable name="weather_aqi" type="int" column="aqilevel" />
+			<Trigger>
+				<VariableCommand name="air_quality" expression="ifelse(#weather_aqi}=0**#weather_aqi{=50,'空气优',#weather_aqi}50**#weather_aqi{=100,'空气良好',#weather_aqi}100**#weather_aqi{=150,'轻度污染',#weather_aqi}150**#weather_aqi{=200,'中度污染',#weather_aqi}200**#weather_aqi{=300,'重度污染',#weather_aqi}300,'严重污染','获取信息异常')" type="string" />
+				<VariableCommand name="weatherId" expression="ifelse(#weather_id}25||#weather_id==0,0,#weather_id==7||#weather_id==22,4,(#weather_id}=4**#weather_id{=6)||(#weather_id}=8**#weather_id{=11)||#weather_id==25,5,#weather_id}=12**#weather_id{=17,6,(#weather_id}=18**#weather_id{=21)||#weather_id==23,7,#weather_id==24,8,#weather_id)" />
+				<VariableCommand name="weatherTemp" expression="substr(@weather_temperature,0,len(@weather_temperature)-1)" type="number" />
+				<VariableCommand name="weatherText" expression="ifelse(#weatherTemp }= 0 ** #weatherTemp {=10,'寒冷',#weatherTemp}10 ** #weatherTemp {=20,'凉爽',#weatherTemp}20 ** #weatherTemp {=30,'warmth',#weatherTemp}30 ** #weatherTemp {= 35,'hot',#weatherTemp}35,'高温',#weatherTemp{0,'极冷','获取信息异常')" type="string"/>
+			</Trigger>
+		</ContentProviderBinder>
+		<ContentProviderBinder name="DeskClockProvider" whereFormat="enabled=='%d'" whereParas="1" columns="message,enabled,hour,minutes,alarmtime,daysofweek" uri="content://com.android.deskclock/alarm" countName="hasdeskclock">
+			<Variable name="clock_message" type="string[]" column="message" />
+			<Variable name="clock_enabled" type="string[]" column="enabled" />
+			<Variable name="clock_hour" type="string[]" column="hour" />
+			<Variable name="clock_minute" type="string[]" column="minutes" />
+			<Variable name="clock_alarmtime" type="string[]" column="alarmtime" />
+			<Variable name="clock_daysofweek" type="string[]" column="daysofweek" />
+		</ContentProviderBinder>
+		<ContentProviderBinder name="getWearableAndHeadSetData" uri="content://com.miui.securitycenter.widgetProvider/getWearableAndHeadSetData" columns="wearableBattery,wearableType,headsetBattery" countName="hasGetWearableAndHeadSetData">
+			<!-- 穿戴设备电量，连接状态为真实电量，如果未连接，为nul -->
+			<Variable name="_wearableBattery" type="string" column="wearableBattery" />
+			<!-- 穿戴设备类型：１：手环 ２：手表 -->
+			<Variable name="_wearableType" type="int" column="wearableType" />
+			<!-- 耳机电量，连接时为耳机电量，未连接时为-1 -->
+			<Variable name="_headsetBattery" type="int" column="headsetBattery" />
+		</ContentProviderBinder>
+		<ContentProviderBinder name="clockProvider" uri="content://com.android.deskclock.bedtimeProvider/bedtime" countName="hasdeskclock">
+			<!-- 未设置作息管理，获取的睡眠数据无效 -->
+			<Variable name="clock_bedtime_state" type="int" column="bedtime_state"/>
+			<!-- 入睡时间的小时,24小时制 -->
+			<Variable name="clock_sleep_hour" type="int" column="sleep_hour"/>
+			<!-- 入睡时间的分 -->
+			<Variable name="clock_sleep_minute" type="int" column="sleep_minute"/>
+			<!-- 起床时间的小时,24小时制 -->
+			<Variable name="clock_wake_hour" type="int" column="wake_hour"/>
+			<!-- 起床时间的分 -->
+			<Variable name="clock_wake_minute" type="int" column="wake_minute"/>
+			<!-- 重复周期 -->
+			<Variable name="clock_repeat_type" type="int" column="repeat_type"/>
+		</ContentProviderBinder>
+		<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps" >
+			<!-- 步数 -->
+		     <Variable name="steps_value" type="int" column="steps"/>
+		     <!-- 目标步数 -->
+			<Variable name="MiSteps_goal" type="string" column="goal"/>
+		     <!-- 距离 -->
+		     <Variable name="MiSteps_distance" type="string" column="distance"/>
+		     <!-- 消耗卡路里 -->
+		     <Variable name="MiSteps_energy" type="string" column="energy"/>
+		     <!-- 运动中高强度时长 -->
+		     <Variable name="MiSteps_strength_duration" type="string" column="strength_duration"/>
+		     <!-- 运动是否达标 -->
+			<Variable name="MiSteps_summary" type="string" column="summary"/>
+		</ContentProviderBinder>
+		<ContentProviderBinder name="data" uri="content://keyguard.notification/notifications" columns="icon,title,content,time,info,subtext,key" countName="hasnotifications">
+			<List name="notice_list" />
+		</ContentProviderBinder>
+	</VariableBinders>
+	
+	
+	<!-- 息屏 日期3 1大时间缩放 -->
+	<!-- colock 日期3 时间3玻璃 -->
+	<Var name="bsbfb" expression="ifelse(ge(#steps_value/100,100),100,#steps_value/100)"/>
+	
+	<!-- 是否开启闹钟 -->
+	<Var name="clockSetbut" expression="ifelse(strIsEmpty(@clock_hour[0]),0,1)" />
+	<Var name="clockSetHour" expression="ifelse(le(@clock_hour[0],9),'0'+@clock_hour[0],@clock_hour[0])" type="string"/>
+	<Var name="clockSetMinute" expression="ifelse(le(@clock_minute[0],9),'0'+@clock_minute[0],@clock_minute[0])" type="string"/>
+	
+	<Var name="sunsetHour" expression="int((#weather_sunset/1000/60/60+8)%24)" type="int"/>
+	<Var name="sunsetMinute" expression="int(#weather_sunset/1000/60%60)" type="int"/>
+	<Var name="sunsetH" expression="ifelse(le(#sunsetHour,9),'0'+#sunsetHour,#sunsetHour)" type="string"/>
+	<Var name="sunsetM" expression="ifelse(le(#sunsetMinute,9),'0'+#sunsetMinute,#sunsetMinute)" type="string"/>
+	<Var name="sunriseHour" expression="int((#weather_sunrise/1000/60/60+8)%24)" type="int"/>
+	<Var name="sunriseMinute" expression="int(#weather_sunrise/1000/60%60)" type="int"/>
+	<Var name="sunriseH" expression="ifelse(le(#sunriseHour,9),'0'+#sunriseHour,#sunriseHour)" type="string"/>
+	<Var name="sunriseM" expression="ifelse(le(#sunriseMinute,9),'0'+#sunriseMinute,#sunriseMinute)" type="string"/>
+	
+	<Var name="WeaMaxtemp" expression="@weather_temphigh[0]"/>
+	<Var name="WeaMintemp" expression="@weather_templow[0]"/>
+	<Var name="WeathDiff" expression="10-(#WeaMaxtemp-#weatherTemp)/(#WeaMaxtemp-#WeaMintemp)*10"/>
+	<Var name="weathAqi" expression="ifelse(ge(int(#weather_aqi/30),10),10,int(#weather_aqi/30))"/>
+	
+	<Var name="WeaWindfx" expression="substr(@weather_wind,0,len(@weather_wind)-4)" type="string"/>
+	<Var name="WeaWindfl" expression="substr(@weather_wind,len(@weather_wind)-2,1)" type="string"/>
+	<Var name="musicCount" expression="int((#music_controls.music_position/1000)/(#music_controls.music_duration/1000)*100)"  persist="true"/>
+	
+	
+	<Var name="strWeek_cn" type="string[]" const="true" expression="''" values="'周日' , '周一' , '周二' , '周三' , '周四' , '周五' , '周六'"/>
+	<Var name="strWeek_zh" type="string[]" const="true" expression="''" values="'星期日' , '星期一' , '星期二' , '星期三' , '星期四' , '星期五' , '星期六'"/>
+	<Var name="strWeek_en" type="string[]" const="true" expression="''" values="'Sun' , 'Mon' , 'Tue' , 'Wed' , 'Thu' , 'Fri' , 'Sat'"/>
+	<Var name="strWeek_enS" type="string[]" const="true" expression="''" values="'SUN' , 'MON' , 'TUE' , 'WED' , 'THU' , 'FRI' , 'SAT'"/>
+	<Var name="strMonth_en" type="string[]" const="true" expression="''" values="'Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'Jun' , 'Jul' , 'Aug' , 'Sep' , 'Oct' , 'Nov' , 'Dec'"/>
+	<Var name="monthNum"  expression="#month+1" persist="true"/>
+	
+	<Var name="time1">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="400" easeType="CubicEaseOut"/>
+			<AniFrame time="600" value="0" />
+		</VariableAnimation>
+	</Var>
+	<Var name="time2">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="400" easeType="CubicEaseOut"/>
+			<AniFrame time="800" value="0" />
+		</VariableAnimation>
+	</Var>
+	<Var name="time3">
+		<VariableAnimation initPause="true" loop="false">
+			<AniFrame time="0" value="400" easeType="CubicEaseOut"/>
+			<AniFrame time="900" value="0" />
+		</VariableAnimation>
+	</Var>
+		
+	<Rectangle x="#w/2" y="#h/2" w="#w" h="#h" align="center" alignV="center" fillColor="#1c1c1c" alpha="255*#long_Press"/>
+	<Group  x="#w/2" y="#h/2" w="#w" h="#h" pivotX="#w/2" pivotY="#h/2" scale="1-0.35*#long_Press" align="center" alignV="center" alpha="255-255*#long_Press">
+		<Group>
+			<Image name="bg1" x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#ba_scale" src="bg/bga.jpg"  srcid="#bg" align="center" blur="50" alpha="255"/>
+			<Image name="bg2" x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#be_scale" srcType="Uri" srcExp="@bgImg" align="center" blur="50" alpha="255" visibility="eq(#custom_bg,1)"/>
+		</Group>
+		<Group  w="#w" h="#h" layered="true">
+			<Group>
+				<Image x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#ba_scale" src="bg/bga.jpg"  srcid="#bg" align="center" alpha="255"/>
+				<Image x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#be_scale" srcType="Uri" srcExp="@bgImg" align="center" alpha="255" visibility="eq(#custom_bg,1)"/>
+				<Image x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#ba_scale" src="bg/bga.jpg"  srcid="#bg" align="center" blur="50" alpha="255" visibility="eq(#vagueBg,1)"/>
+				<Image x="#w/2" y="0" pivotX="#w/2" pivotY="0" scale="1+#be_scale" srcType="Uri" srcExp="@bgImg" align="center" blur="50" alpha="255" visibility="eq(#vagueBg,1)*eq(#custom_bg,1)"/>
+			</Group>
+			<!-- 时间 -->
+			<Group y="0-40+#time2*eq(#start,0)">
+				<Group visibility="eq(#timeys,0)*lt(#time0_H,300)">
+					<Time x="#w/2" y="390" src="time/time0/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="390" src="time/time0/y.png"  space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="390" src="time/time0/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,0)*ge(#time0_H,300)">
+					<Time x="#w/2" y="390" src="time/time1/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="390" src="time/time1/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="390" src="time/time1/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,1)">
+					<Time x="#w/2" y="390" src="time/time2/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="390" src="time/time2/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="390" src="time/time2/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,2)">
+					<Time x="#w/2" y="388" src="time/time3/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="388" src="time/time3/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="388" src="time/time3/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,3)">
+					<Time x="#w/2" y="372" src="time/time4/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="372" src="time/time4/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="372" src="time/time4/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,4)">
+					<Time x="#w/2" y="378" src="time/time5/y.png"  space="0"  align="center"/>
+				</Group>
+				<Group visibility="eq(#timeys,5)">
+					<Time x="#w/2" y="368" src="time/time6/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="368" src="time/time6/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="368" src="time/time6/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,6)">
+					<Time x="#w/2" y="365" src="time/time7/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="365" src="time/time7/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="365" src="time/time7/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+				<Group visibility="eq(#timeys,7)">
+					<Time x="#w/2" y="384" src="time/time8/y1.png" space="0"  align="center" xfermodeNum="8" alpha="255"/>
+					<Time x="#w/2" y="384" src="time/time8/y.png"  space="0"  align="center" visibility="eq(#glass,0)"/>
+					<Time x="#w/2" y="384" src="time/time8/y1.png" space="0"  align="center" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#glass,1)"/>
+				</Group>
+			</Group>
+			<!-- 日期 -->
+			<Group y="0-40+#time3*eq(#start,0)">
+				<Image x="56" y="247" src="index/border1.png" visibility="eq(#setting,1)*eq(#modelSt,1)"/>
+				<Image x="36" y="374" src="index/border2.9.png" w="1008" h="575+330*ge(#time0_H,300)" visibility="eq(#setting,1)*eq(#modelSt,0)*eq(#timeys,0)"/>
+				<Image x="56" y="369" src="index/border3.png" visibility="eq(#setting,1)*eq(#modelSt,0)*gt(#timeys,0)"/>
+				<Image x="984" y="884+330*ge(#time0_H,300)" src="index/size.png" visibility="eq(#setting,1)*eq(#modelSt,0)*eq(#timeys,0)"/>
+				
+				<Button  x="0" y="850+330*ge(#time0_H,300)" w="#w" h="100" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,0)*eq(#timeys,0)">
+					<Triggers>
+						<Trigger action="down">
+							<VariableCommand name="timedown" expression="1"/>
+						</Trigger>
+						<Trigger action="up,cancel">
+							<VariableCommand name="timeSety" expression="ifelse(ge(#timeSety+#moy,330),330,le(#timeSety+#moy,-300),-300,#timeSety+#moy)" persist="true"/>
+							<VariableCommand name="timedown" expression="0"/>
+						</Trigger>
+					</Triggers>
+				</Button>
+				<Text x="606" y="302" align="right" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="@strWeek_en[#day_of_week-1]+'  '+@strMonth_en[#month]+'  '+#date" bold="true" alpha="#customA" visibility="eq(#datays,0)"/>
+				<Image x="634" y="302" alignV="center" src="index/weather/tb.png" srcid="#weatherId" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="eq(#datays,0)"/>
+				<Text x="698" y="302" align="left" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#weatherTemp+'°'" bold="true" alpha="#customA" visibility="eq(#datays,0)"/>
+				
+				<Text x="#w/2" y="302" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#monthNum+'月'+#date+'日  '+@strWeek_zh[#day_of_week-1]+'  '+@weather_description" bold="true" alpha="#customA" visibility="eq(#datays,1)"/>
+				
+				<Text x="550" y="302" align="right" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#monthNum+'月'+#date+'日  '+@strWeek_cn[#day_of_week-1]+'  ·  '" bold="true" alpha="#customA"  visibility="eq(#datays,2)"/>
+				<DateTime x="550" y="302" align="left" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" format="YY年NNNN" bold="true" alpha="#customA"  visibility="eq(#datays,2)"/>
+				
+				<Text x="#w/2" y="302" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#year+' / '+#monthNum+' / '+#date+'  '+@strWeek_zh[#day_of_week-1]" bold="true" alpha="#customA"  visibility="eq(#datays,3)"/>
+				
+				<Text x="#w/2" y="302" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#date+'   '+@strWeek_cn[#day_of_week-1]+'   '+#weatherTemp+'°'" bold="true" alpha="#customA"  visibility="eq(#datays,4)"/>
+				
+				<Text x="#w/2" y="302" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#monthNum+'月'+#date+'日  '+@strWeek_cn[#day_of_week-1]+'  电量'+#battery_level+'%'" bold="true" alpha="#customA"  visibility="eq(#datays,5)"/>
+				
+				<Text x="#w/2" y="302" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#date+'  '+@strWeek_cn[#day_of_week-1]+'  '+@weather_location+'  '+@weather_description+'  '+#weatherTemp+'°'" bold="true" alpha="#customA"  visibility="eq(#datays,6)"/>
+				
+				<Text x="556" y="302" align="right" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="#monthNum+'/'+#date+'  '+@strWeek_cn[#day_of_week-1]" bold="true" alpha="#customA"  visibility="eq(#datays,7)"/>
+				<Image x="584" y="302" alignV="center" src="index/weather/tb.png" srcid="#weatherId" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"  visibility="eq(#datays,7)"/>
+				<Text x="648" y="302" align="left" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="48" textExp="@weather_location" bold="true" alpha="#customA"  visibility="eq(#datays,7)"/>
+			</Group>
+			<Group visibility="eq(#topmodel,0)" x="#topSetX" y="#top_Y">
+				<Rectangle x="180" y="40" w="360/10*#top_an" h="80" align="center" alignV="center" cornerRadius="40,40" fillColor="#000000"  cap="round"/>
+				<Image x="303" y="25" src="index/phone.png" />
+				<Image x="281" y="9" src="index/q_0.png"/>
+				<Image x="281" y="9" src="index/q.png" srcid="int(#battery_level/10)"/>
+				<Text color="#ffffff" format="%d%%" paras="#battery_level" size="34" x="28" y="40" alignV="center"/>
+			</Group>
+			<MusicControl name="music_control" x="#topSetX" y="#top_Y" w="360/10*#top_an" h="80" autoShow="false" defAlbumCover="index/default_bg.png"  updateLyricInterval="500" visibility="eq(#topmodel,1)">
+				<Rectangle x="180" y="40" w="360/10*#top_an" h="80" align="center" alignV="center" cornerRadius="40,40" fillColor="#000000"  cap="round"/>
+				<Image x="21" y="15" src="index/default_bg.png" />
+				<Group x="21" y="15" w="50" h="50" layered="true">
+					<Image name="music_album_cover" w="50" h="50" />
+					<Image w="50" h="50" src="index/musicmk.png" xfermode="dst_in" />
+				</Group>
+				<Image x="290" y="40" src="index/set.png"  alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation>
+						<Size w="4" h="0"  time="0"/>
+						<Size w="4" h="31"  time="500"/>
+						<Size w="4" h="0"  time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="298" y="40" src="index/set.png" alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation>
+						<Size w="4" h="30" time="0"/>
+						<Size w="4" h="1"  time="500"/>
+						<Size w="4" h="30" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="306" y="40" src="index/set.png" alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation >
+						<Size w="4" h="0" time="0"/>
+						<Size w="4" h="33"  time="500"/>
+						<Size w="4" h="0" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="314" y="40" src="index/set.png" alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation >
+						<Size w="4" h="32" time="0"/>
+						<Size w="4" h="1"  time="600"/>
+						<Size w="4" h="32" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="322" y="40" src="index/set.png" alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation >
+						<Size w="4" h="0" time="0"/>
+						<Size w="4" h="30"  time="600"/>
+						<Size w="4" h="0" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="330" y="40" src="index/set.png" alignV="center" visibility="eq(#music_control.music_state,1)">
+					<SizeAnimation >
+						<Size w="4" h="34" time="0"/>
+						<Size w="4" h="1"  time="500"/>
+						<Size w="4" h="34" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="290" y="40" src="index/set.png"  alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="14"/>
+				<Image x="298" y="40" src="index/set.png" alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="20"/>
+				<Image x="306" y="40" src="index/set.png" alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="27"/>
+				<Image x="314" y="40" src="index/set.png" alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="34"/>
+				<Image x="322" y="40" src="index/set.png" alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="27"/>
+				<Image x="330" y="40" src="index/set.png" alignV="center" visibility="ne(#music_control.music_state,1)" w="4" h="21"/>
+			</MusicControl>
+			<Group visibility="eq(#sceneryBg,0)">
+				<Image x="#w/2"  src="bg/bag.webp"  y="0" align="center" srcid="#bg"  w="#w" h="ifelse(gt(#h,2400),#h,2400)" visibility="eq(#vagueBg,0)*eq(#custom_bg,0)"/>
+				<Image name="sceneryImg" x="#w/2" y="#h/2" align="center" alignV="center" srcType="Uri" srcExp="@bgImg2" visibility="eq(#vagueBg,0)*eq(#custom_bg,1)"  pivotX="#w/2" pivotY="#h/2" scale="1+#scenery_scale"/>				
+				<Image x="#w/2"  src="bg/bag.webp"  y="0" align="center" srcid="#bg"  w="#w" h="ifelse(gt(#h,2400),#h,2400)" blur="50" visibility="eq(#vagueBg,1)*eq(#custom_bg,0)"/>
+				<Image name="sceneryImg" x="#w/2" y="#h/2" align="center" alignV="center" srcType="Uri" srcExp="@bgImg2" blur="50" visibility="eq(#vagueBg,1)*eq(#custom_bg,1)"  pivotX="#w/2" pivotY="#h/2" scale="1+#scenery_scale"/>
+			</Group>
+			<!-- 组件 -->
+			<Group y="#box_Y-330*ne(#timeys,0)+300*eq(#timeys,0)*ge(#time0_H,300)+#time1*eq(#start,0)">
+				<Group x="285+#except1*250" y="1020" w="408" h="190" pivotX="408/2" pivotY="190/2" scale="#speed_box1" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg1.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg1.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box1,1)*eq(#box1,2)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box1 == 1" target="speed_box1"/>
+								<VariableCommand name="except2" expression="ifelse(ge(#except2,2),#except2-2,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3" expression="ifelse(ge(#except3,2),#except3-2,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4" expression="ifelse(ge(#except4,2),#except4-2,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5" expression="ifelse(ge(#except5,2),#except5-2,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6" expression="ifelse(ge(#except6,2),#except6-2,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7" expression="ifelse(ge(#except7,2),#except7-2,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8" expression="ifelse(ge(#except8,2),#except8-2,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9" expression="ifelse(ge(#except9,2),#except9-2,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(ge(#except10,2),#except10-2,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(ge(#except11,2),#except11-2,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(ge(#except12,2),#except12-2,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(ge(#except13,2),#except13-2,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(ge(#except14,2),#except14-2,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(ge(#except15,2),#except15-2,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(ge(#except16,2),#except16-2,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(ge(#except17,2),#except17-2,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(ge(#except18,2),#except18-2,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box1" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Image x="20" y="40" alignV="center" src="index/weather/wea.png" srcid="#weatherId" />
+					<Text x="95" y="44" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" textExp="#weatherTemp+'°'" bold="true" alpha="#customA"/>
+					<Text x="22" y="94" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" textExp="@weatherText" bold="true" alpha="#customA"/>
+					<Text x="22" y="144" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" textExp="'Highest'+@weather_temphigh[0]+'°C  lowest'+@weather_templow[0]+'°C'" bold="true" alpha="#customA"/>
+					<Button x="0" y="0" w="408" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="285+#except2*250" y="1020" w="408" h="190" pivotX="408/2" pivotY="190/2" scale="#speed_box2" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg1.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg1.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box2,1)*eq(#box2,2)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box2 == 1" target="speed_box2"/>
+								<VariableCommand name="except1" expression="ifelse(ge(#except1,2),#except1-2,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except3" expression="ifelse(ge(#except3,2),#except3-2,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4" expression="ifelse(ge(#except4,2),#except4-2,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5" expression="ifelse(ge(#except5,2),#except5-2,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6" expression="ifelse(ge(#except6,2),#except6-2,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7" expression="ifelse(ge(#except7,2),#except7-2,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8" expression="ifelse(ge(#except8,2),#except8-2,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9" expression="ifelse(ge(#except9,2),#except9-2,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(ge(#except10,2),#except10-2,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(ge(#except11,2),#except11-2,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(ge(#except12,2),#except12-2,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(ge(#except13,2),#except13-2,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(ge(#except14,2),#except14-2,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(ge(#except15,2),#except15-2,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(ge(#except16,2),#except16-2,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(ge(#except17,2),#except17-2,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(ge(#except18,2),#except18-2,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box2" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="29" y="31" src="index/phon.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/> 
+					<Image x="62" y="37" src="index/sd.png" alpha="255*(abs(sin(#time/1000))+eq(#battery_state,0)+eq(#battery_state,2))" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="86" y="51" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" format="%d%%" paras="#battery_level" bold="true" alpha="#customA"/>
+					<Text x="29" y="102" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" text="iphone" bold="true" alpha="#customA"/>
+					<Rectangle x="29" y="133" w="360" h="20"  cornerRadius="10,10" fillColor="argb(255,#customR,#customG,#customB)" alpha="#customA*0.2"/>
+					<Rectangle x="29" y="133" w="3.6*#battery_level" h="20"  cornerRadius="10,10" fillColor="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+				</Group>
+				<Group x="167+#except3*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box3" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box3,1)*eq(#box3,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box3 == 1" target="speed_box3"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except3),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except3),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except3),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except3),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except3),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except3),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except3),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except3),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except3),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except3),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except3),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except3),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except3),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except3),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except3),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except3),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except3),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box3" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="17" y="11" src="index/perce/yd.png" srcid="#WeathDiff" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="97" y="81" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="36" textExp="#weatherTemp" bold="true" alpha="#customA"/>
+					<Text x="45" y="152" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" textExp="@weather_templow[0]" bold="true" alpha="#customA"/>
+					<Text x="145" y="152" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" textExp="@weather_templow[0]" bold="true" alpha="#customA"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except4*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box4" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box4,1)*eq(#box4,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box4 == 1" target="speed_box4"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except4),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except4),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except4),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except4),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except4),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except4),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except4),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except4),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except4),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except4),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except4),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except4),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except4),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except4),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except4),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except4),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except4),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box4" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="20" y="20" src="index/box4.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="95" y="120" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" text="未开启闹钟" bold="true" alpha="#customA" visibility="eq(#clockSetbut,0)"/>
+					<Text x="95" y="120" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="32" textExp="@clockSetHour+':'+@clockSetMinute" bold="true" alpha="#customA" visibility="eq(#clockSetbut,1)"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN"   package="com.android.deskclock"  class="com.android.deskclock.DeskClockTabActivity"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except5*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box5" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box5,1)*eq(#box5,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box5 == 1" target="speed_box5"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except5),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except5),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except5),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except5),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except5),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except5),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except5),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except5),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except5),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except5),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except5),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except5),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except5),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except5),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except5),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except5),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except5),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box5" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="63" y="74" src="index/box5.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy.png" srcid="int(#_headsetBattery/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(#int(#_headsetBattery/10),1)"/>
+				</Group>
+				<Group x="167+#except6*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box6" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box6,1)*eq(#box6,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box6 == 1" target="speed_box6"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except6),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except6),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except6),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except6),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except6),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except6),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except6),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except6),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except6),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except6),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except6),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except6),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except6),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except6),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except6),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except6),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except6),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box6" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Image x="75" y="62" src="index/box6.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy.png" srcid="int(#battery_level/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(int(#battery_level/10),1)"/>
+				</Group>
+				<Group x="167+#except7*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box7" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box7,1)*eq(#box7,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box7 == 1" target="speed_box7"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except7),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except7),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except7),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except7),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except7),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except7),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except7),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except7),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except7),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except7),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except7),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except7),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except7),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except7),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except7),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except7),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except7),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box7" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="20" y="20" src="index/box7.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="95" y="100" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="32" textExp="@sunsetH+':'+@sunsetM" bold="true" alpha="#customA"/>
+					<Text x="95" y="140" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="24" text="PM" bold="true" alpha="#customA"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except8*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box8" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box8,1)*eq(#box8,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box8 == 1" target="speed_box8"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except8),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except8),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except8),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except8),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except8),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except8),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except8),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except8),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except8),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except8),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except8),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except8),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except8),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except8),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except8),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except8),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except8),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box8" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Text x="95" y="50" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" textExp="@WeaWindfx" bold="true" alpha="#customA"/>
+					<Text x="95" y="95" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="42" textExp="@WeaWindfl" bold="true" alpha="#customA"/>
+					<Text x="95" y="140" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" text="级" bold="true" alpha="#customA"/>
+					
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except9*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box9" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box9,1)*eq(#box9,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box9 == 1" target="speed_box9"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except9),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except9),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except9),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except9),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except9),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except9),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except9),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except9),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except9),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except9),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except9),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except9),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except9),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except9),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except9),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except9),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except9),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box9" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="0" y="0" src="index/box9.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy.png" srcid="int(@_wearableBattery/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(#int(@_wearableBattery/10),1)"/>
+				</Group>
+				<Group x="167+#except10*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box10" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box10,1)*eq(#box10,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box10 == 1" target="speed_box10"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except10),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except10),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except10),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except10),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except10),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except10),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except10),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except10),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except10),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except10),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except10),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except10),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except10),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except10),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except10),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except10),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except10),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box10" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="20" y="20" src="index/box10.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="95" y="95" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="28" textExp="#clock_sleep_hour+'H'" bold="true" alpha="#customA"/>
+					<Text x="95" y="130" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="28" textExp="#clock_sleep_minute+'M'" bold="true" alpha="#customA"/>
+				</Group>
+				<Group x="167+#except11*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box11" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box11,1)*eq(#box11,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box11 == 1" target="speed_box11"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except11),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except11),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except11),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except11),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except11),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except11),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except11),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except11),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except11),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except11),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except11),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except11),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except11),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except11),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except11),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except11),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except11),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box11" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="20" y="20" src="index/box11.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="95" y="100" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="32" textExp="@sunriseH+':'+@sunriseM" bold="true" alpha="#customA"/>
+					<Text x="95" y="140" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="24" text="AM" bold="true" alpha="#customA"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except12*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box12" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box12,1)*eq(#box12,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box12 == 1" target="speed_box12"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except12),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except12),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except12),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except12),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except12),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except12),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except12),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except12),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except12),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except12),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except12),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except12),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except12),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except12),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except12),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except12),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except12),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box12" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Text x="95" y="60" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="28" textExp="@strWeek_enS[#day_of_week-1]" bold="true" alpha="#customA"/>
+					<Text x="95" y="115" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="42" textExp="#date" bold="true" alpha="#customA"/>
+				</Group>
+				<Group x="167+#except13*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box13" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box13,1)*eq(#box13,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box13 == 1" target="speed_box13"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except13),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except13),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except13),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except13),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except13),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except13),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except13),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except13),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except13),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except13),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except13),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except13),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except13),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except13),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except13),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except13),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except13),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box13" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="15" y="11" src="index/perce/yd.png" srcid="#weathAqi" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Text x="95" y="85" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="42" textExp="#weather_aqi" bold="true" alpha="#customA"/>
+					<Text x="95" y="140" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="28" text="AQI" bold="true" alpha="#customA"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.MAIN" class="com.miui.weather2.ActivityWeatherMain" package="com.miui.weather2"  condition="#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except14*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box14" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box14,1)*eq(#box14,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box14 == 1" target="speed_box14"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except14),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except14),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except14),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except14),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except14),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except14),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except14),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except14),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except14),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except14),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except14),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except14),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except14),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except14),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except14),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except14),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except14),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box14" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="20" y="20" src="index/box14.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image name="app_AlipayGphone" srcType="ApplicationIcon" srcExp="'com.eg.android.AlipayGphone,com.eg.android.AlipayGphone.AlipayLogin'" alpha="0"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.eg.android.AlipayGphone&amp;ref=mithemelocksreen" flags="268435458" condition="#misoperation*!#app_AlipayGphone.bmp_width" />
+								<IntentCommand action="android.intent.action.MAIN" package="com.eg.android.AlipayGphone" class="com.alipay.mobile.scan.as.main.MainCaptureActivity" condition="#misoperation*#app_AlipayGphone.bmp_width"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except15*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box15" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box15,1)*eq(#box15,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box15 == 1" target="speed_box15"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except15),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except15),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except15),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except15),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except15),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except15),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except15),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except15),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except15),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except15),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except15),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except15),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except15),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except15),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except15),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except15),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except15),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box15" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image name="app_weixin" srcType="ApplicationIcon" srcExp="'com.tencent.mm,com.tencent.mm.ui.LauncherUI'" alpha="0"/>
+					<Image x="20" y="20" src="index/box15.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.tencent.mm&amp;ref=mithemelocksreen" flags="268435458" condition="#misoperation*!#app_weixin.bmp_width" />
+								<IntentCommand action="android.intent.action.MAIN" package="com.tencent.mm" class="com.tencent.mm.plugin.offline.ui.WalletOfflineEntranceUI" condition="#misoperation*#app_weixin.bmp_width"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except16*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box16" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box16,1)*eq(#box16,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box16 == 1" target="speed_box16"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except16),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except16),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except16),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except16),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except16),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except16),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except16),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except16),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except16),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except16),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except16),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except16),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except16),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except16),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except16),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except16),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except16),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box16" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="0" y="0" src="index/box16.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="17" y="11" src="index/perce/bs_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="17" y="11" src="index/perce/bs.png" srcid="#bsbfb" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(#bsbfb,1)"/>
+					<Text x="95" y="116" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="26" textExp="#steps_value" bold="true" alpha="#customA"/>
+					<Image name="app_health" x="0" y="0" w="168" h="168" srcType="ApplicationIcon" srcExp="'com.mi.health,com.mi.health.home.HomeActivity'" alpha="0"/>
+					<Button x="0" y="0" w="190" h="190" visibility="eq(#notice_down,0)*eq(#setting,0)*eq(#long_Press,0)">
+						<Triggers>
+							<Trigger action="up">
+								<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.mi.health&amp;ref=mithemelocksreen" flags="268435456" condition="!#app_health.bmp_width*#misoperation" />
+								<IntentCommand action="android.intent.action.VIEW" uri="com.mi.health://localhost/d?action=steps&amp;origin=mithemelocksreen" condition="#app_health.bmp_width*#misoperation"/>
+								<ExternCommand command="unlock" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<Group x="167+#except17*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box17" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="20" y="20" src="index/boxbg3.png" xfermodeNum="8" alpha="255"/>
+					<Image x="20" y="20" src="index/boxbg3.png" tint="argb(255,#moduleR,#moduleG,#moduleB)" alpha="#moduleA"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box17,1)*eq(#box17,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box17 == 1" target="speed_box17"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except17),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except17),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except17),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except17),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except17),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except17),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except17),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except17),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except17),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except17),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except17),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except17),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except17),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except17),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except17),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except17),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except18" expression="ifelse(gt(#except18,#except17),#except18-1,#except18)"   persist="true" condition="eq(#box18,1)" delay="400"/>
+								<VariableCommand name="box17" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Text x="95" y="60" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="28" text="距周末" bold="true" alpha="#customA"/>
+					<Text x="95" y="115" align="center" alignV="center" color="argb(255,#customR,#customG,#customB)"  size="42" textExp="#surWeek" bold="true" alpha="#customA"/>
+				</Group>
+				<Group x="167+#except18*250" y="1020" w="190" h="190" pivotX="190/2" pivotY="190/2" scale="#speed_box18" align="center" alignV="center">
+					<Image x="0" y="0" src="index/boxbg2.png" xfermodeNum="8" alpha="255"  visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="0" y="0" src="index/boxbg2.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Image x="-6" y="-11" src="index/clear.png" visibility="eq(#setting,1)*eq(#modelSt,3)"/>
+					<Button x="-6" y="-11" w="52" h="52" visibility="eq(#notice_down,0)*eq(#setting,1)*eq(#modelSt,3)*eq(#speed_box18,1)*eq(#box18,1)">
+						<Triggers>
+							<Trigger action="up">
+								<AnimationCommand command="play(400,800)" condition="#speed_box18 == 1" target="speed_box18"/>
+								<VariableCommand name="except1"   expression="ifelse(gt(#except1,#except18),#except1-1,#except1)"   persist="true" condition="eq(#box1,2)" delay="400"/>
+								<VariableCommand name="except2"   expression="ifelse(gt(#except2,#except18),#except2-1,#except2)"   persist="true" condition="eq(#box2,2)" delay="400"/>
+								<VariableCommand name="except3"   expression="ifelse(gt(#except3,#except18),#except3-1,#except3)"   persist="true" condition="eq(#box3,1)" delay="400"/>
+								<VariableCommand name="except4"   expression="ifelse(gt(#except4,#except18),#except4-1,#except4)"   persist="true" condition="eq(#box4,1)" delay="400"/>
+								<VariableCommand name="except5"   expression="ifelse(gt(#except5,#except18),#except5-1,#except5)"   persist="true" condition="eq(#box5,1)" delay="400"/>
+								<VariableCommand name="except6"   expression="ifelse(gt(#except6,#except18),#except6-1,#except6)"   persist="true" condition="eq(#box6,1)" delay="400"/>
+								<VariableCommand name="except7"   expression="ifelse(gt(#except7,#except18),#except7-1,#except7)"   persist="true" condition="eq(#box7,1)" delay="400"/>
+								<VariableCommand name="except8"   expression="ifelse(gt(#except8,#except18),#except8-1,#except8)"   persist="true" condition="eq(#box8,1)" delay="400"/>
+								<VariableCommand name="except9"   expression="ifelse(gt(#except9,#except18),#except9-1,#except9)"   persist="true" condition="eq(#box9,1)" delay="400"/>
+								<VariableCommand name="except10" expression="ifelse(gt(#except10,#except18),#except10-1,#except10)"   persist="true" condition="eq(#box10,1)" delay="400"/>
+								<VariableCommand name="except11" expression="ifelse(gt(#except11,#except18),#except11-1,#except11)"   persist="true" condition="eq(#box11,1)" delay="400"/>
+								<VariableCommand name="except12" expression="ifelse(gt(#except12,#except18),#except12-1,#except12)"   persist="true" condition="eq(#box12,1)" delay="400"/>
+								<VariableCommand name="except13" expression="ifelse(gt(#except13,#except18),#except13-1,#except13)"   persist="true" condition="eq(#box13,1)" delay="400"/>
+								<VariableCommand name="except14" expression="ifelse(gt(#except14,#except18),#except14-1,#except14)"   persist="true" condition="eq(#box14,1)" delay="400"/>
+								<VariableCommand name="except15" expression="ifelse(gt(#except15,#except18),#except15-1,#except15)"   persist="true" condition="eq(#box15,1)" delay="400"/>
+								<VariableCommand name="except16" expression="ifelse(gt(#except16,#except18),#except16-1,#except16)"   persist="true" condition="eq(#box16,1)" delay="400"/>
+								<VariableCommand name="except17" expression="ifelse(gt(#except17,#except18),#except17-1,#except17)"   persist="true" condition="eq(#box17,1)" delay="400"/>
+								<VariableCommand name="box18" expression="0"   persist="true" delay="400"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Image x="20" y="20" src="index/perce/wy_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="20" y="20" src="index/perce/wy.png" srcid="int(#rCount/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(int(#rCount/10),1)"/>
+					
+					<Image x="42" y="42" src="index/perce/zy_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="42" y="42" src="index/perce/zy.png" srcid="int(#yCount/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(int(#yCount/10),1)"/>
+					
+					<Image x="63" y="63" src="index/perce/ny_0.png" tint="argb(255,#customR,#customG,#customB)" alpha="#customA"/>
+					<Image x="63" y="63" src="index/perce/ny.png" srcid="int(#nCount/10)" tint="argb(255,#customR,#customG,#customB)" alpha="#customA" visibility="ge(int(#nCount/10),1)"/>
+				</Group>
+			</Group>
+			<Group y="#h-1920" visibility="eq(#setting,0)">
+				<Text color="#FFFFFF" text="Double-click to open custom" size="32" x="#w/2" y="1837" align="center"/>
+				<Rectangle x="#w/2" y="1904" w="280" h="10" align="center" cornerRadius="50" fillColor="#ffffff" cap="round"/>
+				<Button x="0" y="1800" w="#w" h="120" visibility="eq(#notice_down,0)*eq(#long_Press,0)">
+					<Triggers>
+						<Trigger action="double">
+							<AnimationCommand command="play(0,400)" target="long_Press"/>
+							<Command target="set_an.animation" value="play"/>
+							<!-- 关闭屏下指纹 -->
+							<ExternCommand command="disableFod" numPara="1"/>
+							<!-- 关闭指纹识别动画 -->
+							<ExternCommand command="disableFodAnim" numPara="1"/>
+						</Trigger>
+					</Triggers>
+				</Button>
+			</Group>
+			
+			<Group y="#h-1920-80"  visibility="eq(#setting,0)">
+				<Image x="127" y="1755" src="index/btbg.png" xfermodeNum="8" alpha="255"/>
+				<Image x="127" y="1755" src="index/btbg1.png" tint="argb(255,#setClocrR,#setClocrG,#setClocrB)" alpha="#setClocrA"/>
+				<Image x="823" y="1755" src="index/btbg.png" xfermodeNum="8" alpha="255"/>
+				<Image x="823" y="1755" src="index/btbg1.png" tint="argb(255,#setClocrR,#setClocrG,#setClocrB)" alpha="#setClocrA"/>
+				
+				<Image x="127" y="1755" src="index/swit.png" srcid="#lightSwitch"/>
+				<Button x="127" y="1755" w="130" h="130" visibility="eq(#notice_down,0)*eq(#long_Press,0)">
+					<Triggers>
+						<Trigger action="up">
+							<VariableCommand name="lightSwitch" expression="(#lightSwitch+1)%2"   condition="#misoperation"/>
+							<IntentCommand action="miui.intent.action.TOGGLE_TORCH" broadcast="true" condition="#misoperation">
+								<Extra name="miui.intent.extra.IS_ENABLE" type="boolean" expression="ifelse(int(@__miui_version_code)}=8,#lightSwitch,1)" />
+							</IntentCommand>
+						</Trigger>
+					</Triggers>
+				</Button>
+				<Image x="823" y="1755" src="index/cemar.png"/>
+				<Button x="823" y="1755" w="130" h="130"  visibility="eq(#notice_down,0)*eq(#long_Press,0)">
+					<Triggers>
+						<Trigger action="up">
+							<IntentCommand action="android.intent.action.MAIN" package="com.android.camera" class="com.android.camera.Camera" condition="#misoperation">
+								<Extra name="ShowCameraWhenLocked" type="boolean" expression="1"/>
+								<Extra name="StartActivityWhenLocked" type="boolean" expression="1"/>
+							</IntentCommand>
+						</Trigger>
+					</Triggers>
+				</Button>
+			</Group>
+			
+			<MusicControl name="music_controls" y="300" w="990" h="380" autoShow="true" defAlbumCover="music/default_bg.png" enableLyric="true" updateLyricInterval="100" visibility="eq(#setting,0)*#music_controls.music_state">
+				<!-- 音乐窗口背景 -->
+				<Image x="45" y="1086" src="music/music_bg.png" xfermodeNum="8" alpha="255"/>
+				<Image x="45" y="1086" src="music/music_bgs.png"/>
+				<Image x="90" y="1124" src="music/default_bg.png" />
+				<Group x="90" y="1124" w="120" h="120" layered="true">
+					<Image name="music_album_cover" w="120" h="120" />
+					<Image w="120" h="120" src="music/mk.webp" xfermode="dst_in" />
+				</Group>
+				<!-- 歌曲名、歌手名、播放时间 -->
+				<Text x="#w/2" y="1128" w="670" align="center" textExp="ifelse(strIsEmpty(@music_controls.title),'暂无音乐',@music_controls.title)" color="#ffffff" size="40" marqueeSpeed="30" bold="true"/>
+				<Text x="#w/2" y="1187" w="670" align="center" textExp="ifelse(strIsEmpty(@music_controls.artist),'--',@music_controls.artist)" color="#ffffff" size="24" marqueeSpeed="30" bold="true" alpha="130" />
+				<Image x="205" y="1285" src="music/lang.png" />
+				<Image x="-465+6.7*#musicCount" y="1285" src="music/long.png" >
+					<Mask x="-465" y="1285" src="music/mask.png" align="absolute" />
+				</Image>
+				<DateTime x="127" y="1277" color="#ffffff" size="24" format="mm:ss" value="#music_controls.music_position" alpha="130"/>
+				<DateTime x="889" y="1277" color="#ffffff" size="24" format="mm:ss" value="#music_controls.music_duration" alpha="130"/>
+				<Image x="357" y="1395" src="music/prev.png" />
+				<Image x="519" y="1383"  src="music/pause.png" srcid="#music_controls.music_state"/>
+				<!-- 上一曲、播放、暂停、下一曲 -->
+				<Button name="music_prev"  x="337" y="1375" w="90" h="68" ></Button>
+				<Button name="music_play"  x="499" y="1365" w="86" h="89" ></Button>
+				<Button name="music_pause" x="499" y="1365" w="86" h="89" ></Button>
+				<Button name="music_next"  x="663" y="1375" w="90" h="68" ></Button>
+				<Image x="896" y="1154" src="music/set.png"  alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation>
+						<Size w="5" h="0"  time="0"/>
+						<Size w="5" h="42"  time="500"/>
+						<Size w="5" h="0"  time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="906" y="1154" src="music/set.png" alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation>
+						<Size w="5" h="42" time="0"/>
+						<Size w="5" h="1"  time="500"/>
+						<Size w="5" h="42" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="916" y="1154" src="music/set.png" alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation >
+						<Size w="5" h="0" time="0"/>
+						<Size w="5" h="37"  time="500"/>
+						<Size w="5" h="0" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="926" y="1154" src="music/set.png" alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation >
+						<Size w="5" h="37" time="0"/>
+						<Size w="5" h="1"  time="600"/>
+						<Size w="5" h="37" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="936" y="1154" src="music/set.png" alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation >
+						<Size w="5" h="0" time="0"/>
+						<Size w="5" h="40"  time="600"/>
+						<Size w="5" h="0" time="1000"/>
+					</SizeAnimation>
+				</Image>
+				<Image x="946" y="1154" src="music/set.png" alignV="center" visibility="eq(#music_controls.music_state,1)">
+					<SizeAnimation >
+						<Size w="5" h="40" time="0"/>
+						<Size w="5" h="1"  time="500"/>
+						<Size w="5" h="40" time="1000"/>
+					</SizeAnimation>
+				</Image>
+			</MusicControl>
+			<Group>
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)">
+					<Image x="0" y="1120" src="index/szbg.png" xfermodeNum="8" alpha="255" w="#w" h="800"/>
+					<Image x="0" y="1120" src="index/szmk.png" w="#w" h="800"/>
+					<Rectangle x="#w/2" y="1279" w="980" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="140+#modelSt*200" y="1279" w="#set_an" h="#set_an/3" align="center" alignV="center" cornerRadius="25,25" fillColor="#338CF2" cap="round"/>
+					<Text color="#333333" text="Time style" size="32" x="140" y="1279" align="center" alignV="center" bold="true" visibility="ne(#modelSt,0)"/>
+					<Text color="#333333" text="Date style" size="32" x="340" y="1279" align="center" alignV="center" bold="true" visibility="ne(#modelSt,1)"/>
+					<Text color="#333333" text="Color settings" size="32" x="540" y="1279" align="center" alignV="center" bold="true" visibility="ne(#modelSt,2)"/>
+					<Text color="#333333" text="Quick W" size="32" x="740" y="1279" align="center" alignV="center" bold="true" visibility="ne(#modelSt,3)"/>
+					<Text color="#333333" text="Other settings" size="32" x="940" y="1279" align="center" alignV="center" bold="true" visibility="ne(#modelSt,4)"/>
+					<Text color="#FFFFFF" text="Time style" size="32" x="140" y="1279" align="center" alignV="center" bold="true" visibility="eq(#modelSt,0)" alpha="((#set_an-100)/50)*255"/>
+					<Text color="#FFFFFF" text="Date style" size="32" x="340" y="1279" align="center" alignV="center" bold="true" visibility="eq(#modelSt,1)" alpha="((#set_an-100)/50)*255"/>
+					<Text color="#FFFFFF" text="Color settings" size="32" x="540" y="1279" align="center" alignV="center" bold="true" visibility="eq(#modelSt,2)" alpha="((#set_an-100)/50)*255"/>
+					<Text color="#FFFFFF" text="Quick W" size="32" x="740" y="1279" align="center" alignV="center" bold="true" visibility="eq(#modelSt,3)" alpha="((#set_an-100)/50)*255"/>
+					<Text color="#FFFFFF" text="Other settings" size="32" x="940" y="1279" align="center" alignV="center" bold="true" visibility="eq(#modelSt,4)" alpha="((#set_an-100)/50)*255"/>
+					
+					<Button x="65" y="1254" w="150" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="modelSt" expression="0"   persist="true"/>
+								<Command target="set_an.animation" value="play" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="265" y="1254" w="150" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="modelSt" expression="1"   persist="true"/>
+								<Command target="set_an.animation" value="play" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="465" y="1254" w="150" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="modelSt" expression="2"   persist="true"/>
+								<Command target="set_an.animation" value="play" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="665" y="1254" w="150" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="modelSt" expression="3"   persist="true"/>
+								<Command target="set_an.animation" value="play" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="865" y="1254" w="150" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="modelSt" expression="4"   persist="true"/>
+								<Command target="set_an.animation" value="play" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Rectangle x="486" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#000000" cap="round" alpha="255*0.15" visibility="ne(#modelSt,0)*ne(#modelSt,3)"/>
+					<Rectangle x="514" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#000000" cap="round" alpha="255*0.15" visibility="ne(#modelSt,1)*ne(#modelSt,3)"/>
+					<Rectangle x="542" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#000000" cap="round" alpha="255*0.15" visibility="ne(#modelSt,2)*ne(#modelSt,3)"/>
+					<Rectangle x="570" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#000000" cap="round" alpha="255*0.15" visibility="ne(#modelSt,3)"/>
+					<Rectangle x="598" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#000000" cap="round" alpha="255*0.15" visibility="ne(#modelSt,4)*ne(#modelSt,3)"/>
+					
+					<Rectangle x="486" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#ffffff" cap="round" alpha="255" visibility="eq(#modelSt,0)*ne(#modelSt,3)"/>
+					<Rectangle x="514" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#ffffff" cap="round" alpha="255" visibility="eq(#modelSt,1)*ne(#modelSt,3)"/>
+					<Rectangle x="542" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#ffffff" cap="round" alpha="255" visibility="eq(#modelSt,2)*ne(#modelSt,3)"/>
+					<Rectangle x="598" y="1883" w="12" h="12" align="center" alignV="center" cornerRadius="50" fillColor="#ffffff" cap="round" alpha="255" visibility="eq(#modelSt,4)*ne(#modelSt,3)"/>
+				</Group>
+				<Button x="0" y="0" w="#w" h="1120+#h-1920" visibility="eq(#setting,1)">
+					<Triggers>
+						<Trigger action="double">
+							<VariableCommand name="setting" expression="0" condition="#misoperation" persist="true"/>
+							<!-- 开启屏下指纹 -->
+							<ExternCommand command="disableFod" numPara="0" condition="#misoperation"/>
+							<!-- 开启指纹识别动画 -->
+							<ExternCommand command="disableFodAnim" numPara="0" condition="#misoperation"/>
+						</Trigger>
+					</Triggers>
+				</Button>
+				<!-- 时间设置 -->
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)*eq(#modelSt,0)">
+					<Image x="51" y="1368"  src="index/timebg.png"/>
+					<Image x="318" y="1368" src="index/timebg.png"/>
+					<Image x="584" y="1368" src="index/timebg.png"/>
+					<Image x="849" y="1368" src="index/timebg.png"/>
+					<Image x="51" y="1617"  src="index/timebg.png"/>
+					<Image x="318" y="1617" src="index/timebg.png"/>
+					<Image x="584" y="1617" src="index/timebg.png"/>
+					<Image x="849" y="1617" src="index/timebg.png"/>
+					<Image x="51"  y="1368" src="index/time1.png" alpha="255-255*0.4*ne(#timeys,0)"/>
+					<Image x="318" y="1368" src="index/time2.png" alpha="255-255*0.4*ne(#timeys,1)"/>
+					<Image x="584" y="1368" src="index/time3.png" alpha="255-255*0.4*ne(#timeys,2)"/>
+					<Image x="849" y="1368" src="index/time4.png" alpha="255-255*0.4*ne(#timeys,3)"/>
+					<Image x="51"  y="1617" src="index/time5.png" alpha="255-255*0.4*ne(#timeys,4)"/>
+					<Image x="318" y="1617" src="index/time6.png" alpha="255-255*0.4*ne(#timeys,5)"/>
+					<Image x="584" y="1617" src="index/time7.png" alpha="255-255*0.4*ne(#timeys,6)"/>
+					<Image x="849" y="1617" src="index/time8.png" alpha="255-255*0.4*ne(#timeys,7)"/>
+					<Image x="49"  y="1366" src="index/timebor.png" visibility="eq(#timeys,0)"/>
+					<Image x="316" y="1366" src="index/timebor.png" visibility="eq(#timeys,1)"/>
+					<Image x="582" y="1366" src="index/timebor.png" visibility="eq(#timeys,2)"/>
+					<Image x="847" y="1366" src="index/timebor.png" visibility="eq(#timeys,3)"/>
+					<Image x="49"  y="1615" src="index/timebor.png" visibility="eq(#timeys,4)"/>
+					<Image x="316" y="1615" src="index/timebor.png" visibility="eq(#timeys,5)"/>
+					<Image x="582" y="1615" src="index/timebor.png" visibility="eq(#timeys,6)"/>
+					<Image x="847" y="1615" src="index/timebor.png" visibility="eq(#timeys,7)"/>
+					<Button x="51" y="1368" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="0"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="318" y="1368" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="1"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="584" y="1368" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="2"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="849" y="1368" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="3"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button x="51" y="1617" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="4"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="318" y="1617" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="5"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="584" y="1617" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="6"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="849" y="1617" w="180" h="200" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="timeys" expression="7"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<!-- 日期设置 -->
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)*eq(#modelSt,1)">
+					<Rectangle x="280" y="1415" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="280" y="1535" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="280" y="1655" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="280" y="1775" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="790" y="1415" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="790" y="1535" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="790" y="1655" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="790" y="1775" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#000000"  cap="round" alpha="255*0.1"/>
+					<Rectangle x="280+510*(#datays%2)" y="1415+120*int(#datays/2)" w="460" h="70" align="center" alignV="center" cornerRadius="35,35" fillColor="#2A82E4"  cap="round"/>
+					<Text color="#333333" text="Wed  Jun  11" size="32" x="320" y="1415" align="right" alignV="center" bold="true" visibility="ne(#datays,0)" alpha="255*0.6"/>
+					<Image x="353" y="1417" align="center" alignV="center" src="index/weather/weat.png" tint="argb(255,51,51,51)" visibility="ne(#datays,0)" alpha="255*0.6"/>
+					<Text color="#333333" text="30°" size="32" x="385" y="1415" align="left" alignV="center" bold="true" visibility="ne(#datays,0)" alpha="255*0.6"/>
+					<Text color="#333333" text="3月21日  星期六  晴" size="30" x="790" y="1415" align="center" alignV="center" bold="true" visibility="ne(#datays,1)" alpha="255*0.6"/>
+					<Text color="#333333" text="3月21日 周六 · 甲辰年二月廿二" size="30" x="280" y="1535" align="center" alignV="center" bold="true" visibility="ne(#datays,2)" alpha="255*0.6"/>
+					<Text color="#333333" text="2025/03/21  星期六" size="30" x="790" y="1535" align="center" alignV="center" bold="true" visibility="ne(#datays,3)" alpha="255*0.6"/>
+					<Text color="#333333" text="21  周六  30°" size="30" x="280" y="1655" align="center" alignV="center" bold="true" visibility="ne(#datays,4)" alpha="255*0.6"/>
+					<Text color="#333333" text="03月21日  周六  电量80%" size="32" x="790" y="1655" align="center" alignV="center" bold="true" visibility="ne(#datays,5)" alpha="255*0.6"/>
+					<Text color="#333333" text="21 周六 武侯区 晴 30°" size="32" x="280" y="1775" align="center" alignV="center" bold="true" visibility="ne(#datays,6)" alpha="255*0.6"/>
+					<Text color="#333333" text="03/21  周六" size="32" x="790" y="1775" align="right" alignV="center" bold="true" visibility="ne(#datays,7)" alpha="255*0.6"/>
+					<Image x="823" y="1777" align="center" alignV="center" src="index/weather/weat.png" tint="argb(255,51,51,51)" visibility="ne(#datays,7)" alpha="255*0.6"/>
+					<Text color="#333333" text="武侯区" size="32" x="855" y="1775" align="left" alignV="center" bold="true" visibility="ne(#datays,7)" alpha="255*0.6"/>
+					<Text color="#ffffff" text="Wed  Jun  11" size="32" x="320" y="1415" align="right" alignV="center" bold="true" visibility="eq(#datays,0)"/>
+					<Image x="353" y="1417" align="center" alignV="center" src="index/weather/weat.png" visibility="eq(#datays,0)"/>
+					<Text color="#ffffff" text="30°" size="32" x="385" y="1415" align="left" alignV="center" bold="true" visibility="eq(#datays,0)"/>
+					<Text color="#ffffff" text="3月21日  星期六  晴" size="30" x="790" y="1415" align="center" alignV="center" bold="true" visibility="eq(#datays,1)"/>
+					<Text color="#ffffff" text="3月21日 周六 · 甲辰年二月廿二" size="30" x="280" y="1535" align="center" alignV="center" bold="true" visibility="eq(#datays,2)"/>
+					<Text color="#ffffff" text="2025/03/21  星期六" size="30" x="790" y="1535" align="center" alignV="center" bold="true" visibility="eq(#datays,3)"/>
+					<Text color="#ffffff" text="21  周六  30°" size="30" x="280" y="1655" align="center" alignV="center" bold="true" visibility="eq(#datays,4)"/>
+					<Text color="#ffffff" text="03月21日  周六  电量80%" size="32" x="790" y="1655" align="center" alignV="center" bold="true" visibility="eq(#datays,5)"/>
+					<Text color="#ffffff" text="21 周六 武侯区 晴 30°" size="32" x="280" y="1775" align="center" alignV="center" bold="true" visibility="eq(#datays,6)"/>
+					<Text color="#ffffff" text="03/21  周六" size="32" x="790" y="1775" align="right" alignV="center" bold="true" visibility="eq(#datays,7)"/>
+					<Image x="823" y="1777" align="center" alignV="center" src="index/weather/weat.png"  visibility="eq(#datays,7)"/>
+					<Text color="#ffffff" text="武侯区" size="32" x="855" y="1775" align="left" alignV="center" bold="true" visibility="eq(#datays,7)"/>
+					
+					<Button x="50" y="1380" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="0"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="560" y="1380" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="1"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="50" y="1500" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="2"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="560" y="1500" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="3"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="50" y="1620" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="4"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="560" y="1620" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="5"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="50" y="1740" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="6"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button x="560" y="1740" w="460" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="datays" expression="7"   persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<!-- 颜色设置 -->
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)*eq(#modelSt,2)">
+					<Image x="50" y="1371"  src="index/colorset.png"/>
+					
+					<Image x="-791+#redX*eq(#colorSet,0)+#redY*eq(#colorSet,1)+#reds*eq(#colorSet,2)" y="1371" src="index/r.png">
+						<Mask x="-791" y="1371" src="index/mask.png" align="absolute" />
+					</Image>
+					
+					<Image x="-791+#greenX*eq(#colorSet,0)+#greenY*eq(#colorSet,1)+#greens*eq(#colorSet,2)" y="1464" src="index/g.png">
+						<Mask x="-791" y="1464" src="index/mask.png" align="absolute" />
+					</Image>
+					<Image x="-791+#blueX*eq(#colorSet,0)+#blueY*eq(#colorSet,1)+#blues*eq(#colorSet,2)" y="1561" src="index/b.png">
+						<Mask x="-791" y="1561" src="index/mask.png" align="absolute" />
+					</Image>
+					<Image x="-791+#alphaX*eq(#colorSet,0)+#alphaY*eq(#colorSet,1)+#alphas*eq(#colorSet,2)" y="1656" src="index/a.png">
+						<Mask x="-791" y="1656" src="index/mask.png" align="absolute" />
+					</Image>
+					
+					<Button  x="69" y="1351" w="920" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="color1" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="site1" expression="ifelse(ge(#site1+#mox,880),880,le(#site1+#mox,0),0,#site1+#mox)" condition="eq(#colorSet,0)" persist="true"/>
+								<VariableCommand name="module1" expression="ifelse(ge(#module1+#mox,880),880,le(#module1+#mox,0),0,#module1+#mox)" condition="eq(#colorSet,1)" persist="true"/>
+								<VariableCommand name="setys1" expression="ifelse(ge(#setys1+#mox,880),880,le(#setys1+#mox,0),0,#setys1+#mox)" condition="eq(#colorSet,2)" persist="true"/>
+								<VariableCommand name="color1" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button  x="69" y="1444" w="920" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="color2" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="site2" expression="ifelse(ge(#site2+#mox,880),880,le(#site2+#mox,0),0,#site2+#mox)" condition="eq(#colorSet,0)" persist="true"/>
+								<VariableCommand name="module2" expression="ifelse(ge(#module2+#mox,880),880,le(#module2+#mox,0),0,#module2+#mox)" condition="eq(#colorSet,1)" persist="true"/>
+								<VariableCommand name="setys2" expression="ifelse(ge(#setys2+#mox,880),880,le(#setys2+#mox,0),0,#setys2+#mox)" condition="eq(#colorSet,2)" persist="true"/>
+								<VariableCommand name="color2" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button  x="69" y="1541" w="920" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="color3" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="site3" expression="ifelse(ge(#site3+#mox,880),880,le(#site3+#mox,0),0,#site3+#mox)" condition="eq(#colorSet,0)" persist="true"/>
+								<VariableCommand name="module3" expression="ifelse(ge(#module3+#mox,880),880,le(#module3+#mox,0),0,#module3+#mox)" condition="eq(#colorSet,1)" persist="true"/>
+								<VariableCommand name="setys3" expression="ifelse(ge(#setys3+#mox,880),880,le(#setys3+#mox,0),0,#setys3+#mox)" condition="eq(#colorSet,2)" persist="true"/>
+								<VariableCommand name="color3" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button  x="69" y="1636" w="920" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="color4" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="site4" expression="ifelse(ge(#site4+#mox,880),880,le(#site4+#mox,0),0,#site4+#mox)" condition="eq(#colorSet,0)" persist="true"/>
+								<VariableCommand name="module4" expression="ifelse(ge(#module4+#mox,880),880,le(#module4+#mox,0),0,#module4+#mox)" condition="eq(#colorSet,1)" persist="true"/>
+								<VariableCommand name="setys4" expression="ifelse(ge(#setys4+#mox,880),880,le(#setys4+#mox,0),0,#setys4+#mox)" condition="eq(#colorSet,2)" persist="true"/>
+								<VariableCommand name="color4" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Text x="981" y="1396" alignV="center" textExp="#customR" color="#000000" size="24" bold="true" visibility="eq(#colorSet,0)"/>
+					<Text x="981" y="1489" alignV="center" textExp="#customG" color="#000000" size="24" bold="true" visibility="eq(#colorSet,0)"/>
+					<Text x="981" y="1586" alignV="center" textExp="#customB" color="#000000" size="24" bold="true" visibility="eq(#colorSet,0)"/>
+					<Text x="981" y="1681" alignV="center" textExp="#customA" color="#000000" size="24" bold="true" visibility="eq(#colorSet,0)"/>
+					
+					<Text x="981" y="1396" alignV="center" textExp="#moduleR" color="#000000" size="24" bold="true" visibility="eq(#colorSet,1)"/>
+					<Text x="981" y="1489" alignV="center" textExp="#moduleG" color="#000000" size="24" bold="true" visibility="eq(#colorSet,1)"/>
+					<Text x="981" y="1586" alignV="center" textExp="#moduleB" color="#000000" size="24" bold="true" visibility="eq(#colorSet,1)"/>
+					<Text x="981" y="1681" alignV="center" textExp="#moduleA" color="#000000" size="24" bold="true" visibility="eq(#colorSet,1)"/>
+					
+					<Text x="981" y="1396" alignV="center" textExp="#setClocrR" color="#000000" size="24" bold="true" visibility="eq(#colorSet,2)"/>
+					<Text x="981" y="1489" alignV="center" textExp="#setClocrG" color="#000000" size="24" bold="true" visibility="eq(#colorSet,2)"/>
+					<Text x="981" y="1586" alignV="center" textExp="#setClocrB" color="#000000" size="24" bold="true" visibility="eq(#colorSet,2)"/>
+					<Text x="981" y="1681" alignV="center" textExp="#setClocrA" color="#000000" size="24" bold="true" visibility="eq(#colorSet,2)"/>
+					
+					<Image x="88" y="1757"  src="index/colorsz1.png"  visibility="eq(#colorSet,0)"/>
+					<Image x="316" y="1757"  src="index/colorsz2.png"  visibility="eq(#colorSet,1)"/>
+					<Image x="542" y="1757"  src="index/colorsz3.png"  visibility="eq(#colorSet,2)"/>
+					<Image x="769" y="1757"  src="index/colorsz4.png" visibility="eq(#cleardown,1)"/>
+					
+					<Button  x="88" y="1757" w="200" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="colorSet" expression="0" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="316" y="1757" w="200" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="colorSet" expression="1" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="542" y="1757" w="200" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="colorSet" expression="2" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="769" y="1757" w="200" h="70" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="cleardown" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="site1"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,0)"/>
+								<VariableCommand name="site2"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,0)"/>
+								<VariableCommand name="site3"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,0)"/>
+								<VariableCommand name="site4"   expression="880"   persist="true" condition="#misoperation*eq(#colorSet,0)"/>
+								
+								<VariableCommand name="module1"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,1)"/>
+								<VariableCommand name="module2"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,1)"/>
+								<VariableCommand name="module3"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,1)"/>
+								<VariableCommand name="module4"   expression="88"   persist="true" condition="#misoperation*eq(#colorSet,1)"/>
+								<VariableCommand name="setys1"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,2)"/>
+								<VariableCommand name="setys2"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,2)"/>
+								<VariableCommand name="setys3"   expression="880"  persist="true" condition="#misoperation*eq(#colorSet,2)"/>
+								<VariableCommand name="setys4"   expression="880"   persist="true" condition="#misoperation*eq(#colorSet,2)"/>
+								<VariableCommand name="cleardown" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<!-- 组件设置 -->
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)*eq(#modelSt,3)">
+					<Image x="61" y="1373"  src="index/boxsz1.png" visibility="eq(#boxym,0)"/>
+					<Image x="61" y="1373"  src="index/xz1.png" visibility="eq(#boxym,0)*eq(#box1,2)"/>
+					<Image x="60" y="1575"  src="index/xz1.png" visibility="eq(#boxym,0)*eq(#box2,2)"/>
+					
+					<Image x="494" y="1373"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box3,1)"/>
+					<Image x="687" y="1373"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box4,1)"/>
+					<Image x="873" y="1373"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box5,1)"/>
+					<Image x="492" y="1575"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box6,1)"/>
+					<Image x="686" y="1575"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box7,1)"/>
+					<Image x="873" y="1575"  src="index/xz2.png" visibility="eq(#boxym,0)*eq(#box8,1)"/>
+					
+					<Image x="50" y="1373"  src="index/boxsz2.png" visibility="eq(#boxym,1)"/>
+					<Image x="44" y="1367"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box9,1)"/>
+					<Image x="250" y="1367"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box10,1)"/>
+					<Image x="456" y="1367"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box11,1)"/>
+					<Image x="662" y="1367"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box12,1)"/>
+					<Image x="868" y="1367"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box13,1)"/>
+					<Image x="44" y="1569"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box14,1)"/>
+					<Image x="250" y="1569"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box15,1)"/>
+					<Image x="456" y="1569"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box16,1)"/>
+					<Image x="662" y="1569"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box17,1)"/>
+					<Image x="868" y="1569"  src="index/xz2.png" visibility="eq(#boxym,1)*eq(#box18,1)"/>
+					
+					<Image x="59" y="1778"  src="index/boxym.png"/>
+					<Text color="#333333" text="1/2" size="32" x="540" y="1873" align="center" alignV="center" bold="true" visibility="eq(#boxym,0)"/>
+					<Text color="#333333" text="2/2" size="32" x="540" y="1873" align="center" alignV="center" bold="true" visibility="eq(#boxym,1)"/>
+					<!-- 第一页 -->
+					<Button  x="61" y="1373" w="402" h="162" visibility="eq(#boxym,0)*eq(#box1,0)*le(#boxSet,2)*eq(#speed_box1,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except1" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box1" condition="#misoperation"/>
+								<VariableCommand name="box1" expression="2" condition="#misoperation" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="60" y="1575" w="402" h="162" visibility="eq(#boxym,0)*eq(#box2,0)*le(#boxSet,2)*eq(#speed_box2,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except2" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box2" condition="#misoperation"/>
+								<VariableCommand name="box2" expression="2" condition="#misoperation" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="494" y="1373" w="162" h="162" visibility="eq(#boxym,0)*eq(#box3,0)*le(#boxSet,3)*eq(#speed_box3,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except3" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box3" condition="#misoperation"/>
+								<VariableCommand name="box3" expression="1" condition="#misoperation" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="687" y="1373" w="162" h="162" visibility="eq(#boxym,0)*eq(#box4,0)*le(#boxSet,3)*eq(#speed_box4,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except4" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box4" condition="#misoperation"/>
+								<VariableCommand name="box4" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="873" y="1373" w="162" h="162" visibility="eq(#boxym,0)*eq(#box5,0)*le(#boxSet,3)*eq(#speed_box5,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except5" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box5" condition="#misoperation"/>
+								<VariableCommand name="box5" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="492" y="1575" w="162" h="162" visibility="eq(#boxym,0)*eq(#box6,0)*le(#boxSet,3)*eq(#speed_box6,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except6" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box6" condition="#misoperation"/>
+								<VariableCommand name="box6" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="686" y="1575" w="162" h="162" visibility="eq(#boxym,0)*eq(#box7,0)*le(#boxSet,3)*eq(#speed_box7,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except7" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box7" condition="#misoperation"/>
+								<VariableCommand name="box7" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="873" y="1575" w="162" h="162" visibility="eq(#boxym,0)*eq(#box8,0)*le(#boxSet,3)*eq(#speed_box8,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except8" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box8" condition="#misoperation"/>
+								<VariableCommand name="box8" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<!-- 第二页 -->
+					<Button  x="44" y="1367" w="162" h="162" visibility="eq(#boxym,1)*eq(#box9,0)*le(#boxSet,3)*eq(#speed_box9,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except9" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box9" condition="#misoperation"/>
+								<VariableCommand name="box9" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="250" y="1367" w="162" h="162" visibility="eq(#boxym,1)*eq(#box10,0)*le(#boxSet,3)*eq(#speed_box10,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except10" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box10" condition="#misoperation"/>
+								<VariableCommand name="box10" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="456" y="1367" w="162" h="162" visibility="eq(#boxym,1)*eq(#box11,0)*le(#boxSet,3)*eq(#speed_box11,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except11" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box11" condition="#misoperation"/>
+								<VariableCommand name="box11" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="662" y="1367" w="162" h="162" visibility="eq(#boxym,1)*eq(#box12,0)*le(#boxSet,3)*eq(#speed_box12,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except12" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box12" condition="#misoperation"/>
+								<VariableCommand name="box12" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="868" y="1367" w="162" h="162" visibility="eq(#boxym,1)*eq(#box13,0)*le(#boxSet,3)*eq(#speed_box13,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except13" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box13" condition="#misoperation"/>
+								<VariableCommand name="box13" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="44" y="1569" w="162" h="162" visibility="eq(#boxym,1)*eq(#box14,0)*le(#boxSet,3)*eq(#speed_box14,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except14" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box14" condition="#misoperation"/>
+								<VariableCommand name="box14" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="250" y="1569" w="162" h="162" visibility="eq(#boxym,1)*eq(#box15,0)*le(#boxSet,3)*eq(#speed_box15,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except15" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box15" condition="#misoperation"/>
+								<VariableCommand name="box15" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="456" y="1569" w="162" h="162" visibility="eq(#boxym,1)*eq(#box16,0)*le(#boxSet,3)*eq(#speed_box16,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except16" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box16" condition="#misoperation"/>
+								<VariableCommand name="box16" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="662" y="1569" w="162" h="162" visibility="eq(#boxym,1)*eq(#box17,0)*le(#boxSet,3)*eq(#speed_box17,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except17" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box17" condition="#misoperation"/>
+								<VariableCommand name="box17" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="868" y="1569" w="162" h="162" visibility="eq(#boxym,1)*eq(#box18,0)*le(#boxSet,3)*eq(#speed_box18,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="except18" expression="#boxSet" condition="#misoperation" persist="true"/>
+								<AnimationCommand command="play(0,400)" target="speed_box18" condition="#misoperation"/>
+								<VariableCommand name="box18" expression="1" condition="#misoperation" persist="true" />
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="-539+#box_Y" y="1778" src="index/lang.png">
+						<Mask x="-539" y="1778" src="index/mk1.png" align="absolute" />
+					</Image>
+					<Button  x="150" y="1758" w="750" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="boxdown" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="boxy"  expression="ifelse(ge(#boxy+#mox,709),709,le(#boxy+#mox,0),0,#boxy+#mox)" />
+								<VariableCommand name="boxdown" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button  x="440" y="1850" w="190" h="50" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="boxym" expression="(#boxym+1)%2" condition="#misoperation" persist="true"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+				<!-- Other settings -->
+				<Group y="#h-1920+#sz_an" visibility="eq(#setting,1)*eq(#modelSt,4)">
+					<Image x="50" y="1371"  src="index/topsz.png"/>
+					<Image x="-689+#top_Y" y="1371" src="index/lang1.png">
+						<Mask x="-689" y="1371" src="index/mk2.png" align="absolute" />
+					</Image>
+					<Button  x="111" y="1351" w="860" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="topYdown" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="topy"  expression="ifelse(ge(#topy+#mox,820),820,le(#topy+#mox,0),0,#topy+#mox)" persist="true"/>
+								<VariableCommand name="topYdown" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="-689+#top_X" y="1478" src="index/lang1.png">
+						<Mask x="-689" y="1478" src="index/mk2.png" align="absolute" />
+					</Image>
+					<Button  x="111" y="1458" w="860" h="90" visibility="eq(#notice_down,0)">
+						<Triggers>
+							<Trigger action="down">
+								<VariableCommand name="topXdown" expression="1"/>
+							</Trigger>
+							<Trigger action="up,cancel">
+								<VariableCommand name="topx"  expression="ifelse(ge(#topx+#mox,820),820,le(#topx+#mox,0),0,#topx+#mox)" persist="true"/>
+								<VariableCommand name="topXdown" expression="0"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Image x="250" y="1605"  src="index/but0.png" />
+					<Image x="250" y="1605"  src="index/but1.png" visibility="eq(#topmodel,0)"/>
+					<Image x="590" y="1605"  src="index/but0.png" />
+					<Image x="590" y="1605"  src="index/but1.png" visibility="eq(#topmodel,1)"/>
+					<Image x="930" y="1605"  src="index/but0.png" />
+					<Image x="930" y="1605"  src="index/but1.png" visibility="eq(#sceneryBg,0)"/>
+					<Image x="250" y="1742"  src="index/but0.png" />
+					<Image x="250" y="1742"  src="index/but1.png" visibility="eq(#start,0)"/>
+					<Image x="590" y="1742"  src="index/but0.png" />
+					<Image x="590" y="1742"  src="index/but1.png" visibility="eq(#vagueBg,1)"/>
+					<Image x="930" y="1742"  src="index/but0.png" />
+					<Image x="930" y="1742"  src="index/but1.png" visibility="eq(#glass,0)"/>
+					<Button  x="50" y="1585" w="300" h="80">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="topmodel" expression="ifelse(ne(#topmodel,0),0,2)" condition="#misoperation"  persist="true" />
+								<Command target="top_an.animation" value="play" condition="#misoperation"/> 
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="390" y="1585" w="300" h="80">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="topmodel" expression="ifelse(ne(#topmodel,1),1,2)" persist="true" />
+								<Command target="top_an.animation" value="play" condition="#misoperation"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="730" y="1585" w="300" h="80" visibility="ne(#bg,1)">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="sceneryBg" expression="(#sceneryBg+1)%2" persist="true"  condition="#misoperation"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					
+					<Button  x="50" y="1722" w="300" h="80">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="start" expression="(#start+1)%2" persist="true" condition="#misoperation"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="390" y="1722" w="300" h="80">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="vagueBg" expression="(#vagueBg+1)%2" persist="true" condition="#misoperation"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+					<Button  x="730" y="1722" w="300" h="80">
+						<Triggers>
+							<Trigger action="up">
+								<VariableCommand name="glass" expression="(#glass+1)%2" persist="true" condition="#misoperation"/>
+							</Trigger>
+						</Triggers>
+					</Button>
+				</Group>
+			</Group>
+			<Group y="0-#music_control.music_state*380" visibility="eq(#setting,0)*eq(#long_Press,0)">
+				<!-- 通知列表；maxHeight 列表最大显示高度，超出部分不显示，可上下滚动列表 -->
+				<List name="notice_list" x="#w/2" align="center" y="1100" w="991" maxHeight="810" data="icon:bitmap,title:string,content:string,time:string,info:string,subtext:string,key:int" visibility="#hasnotifications">
+				    <Item w="991" h="240">
+				        <Button x="0" y="0" w="991" h="240" alignChildren="true">
+							<Image name="noticeBg" src="listimg/notice_bg.png" xfermodeNum="8" alpha="255"/>
+							<Image name="noticeBg" src="listimg/notice_bg1.png"/>
+				            <Image x="60" y="#noticeBg.bmp_height/2" alignV="center" w="120" h="120" name="notice_icon"/>
+				            <Text x="200" y="#noticeBg.bmp_height/2-30" size="34" alignV="center" color="#FFFFFF" bold="true" w="500" h="36" marqueeSpeed="30" name="notice_title"/>
+				            <Text x="200" y="#noticeBg.bmp_height/2+30" size="30" alignV="center" color="#FFFFFF" w="500" h="42" marqueeSpeed="30" name="notice_content"/>
+				            <Text x="#noticeBg.bmp_width - 40" y="#noticeBg.bmp_height/2-30" align="right" alignV="center" size="30"  color="#FFFFFF"  name="notice_time"/>
+							<Image align="right" alignV="center" src="listimg/close.png" x="#noticeBg.bmp_width - 40" y="#noticeBg.bmp_height/2"/>
+				            <Triggers>
+								<Trigger action="down">
+									<VariableCommand name="notice_down" expression="1" persist="true" />
+								</Trigger>
+				                <Trigger action="up">
+				                    <IntentCommand action="com.miui.app.ExtraStatusBarManager.action_remove_keyguard_notification" broadcast="true">
+				                        <Extra name="com.miui.app.ExtraStatusBarManager.extra_notification_key" type="int" expression="#notice_list.key" />
+				                        <Extra name="com.miui.app.ExtraStatusBarManager.extra_notification_click" type="int" expression="#touch_begin_x { 950" />
+				                    </IntentCommand>
+				                </Trigger>
+				            </Triggers>
+				        </Button>
+				    </Item>
+				    <AttrDataBinders>
+				        <AttrDataBinder target="notice_icon" attr="bitmap" data="icon" />
+				        <AttrDataBinder target="notice_title" attr="text" data="title" />
+				        <AttrDataBinder target="notice_content" attr="text" data="content" />
+				        <AttrDataBinder target="notice_time" attr="text" data="time" />
+				    </AttrDataBinders>
+				</List>
+				<Button x="0" y="0" w="#w" h="#h">
+					<Triggers>
+						<Trigger action="up,cancel">
+							<VariableCommand name="notice_down" expression="0" persist="true" />
+						</Trigger>
+					</Triggers>
+				</Button>
+			</Group>
+		</Group>
+		
+		
+		
+		<Image x="#w/2" y="#h/2" w="#w+200" h="#h+200" align="center" alignV="center" src="bg/ma.9.png" alpha="225*#long_Press"/>
+		<Image x="#w/2" y="#h/2" w="#w+90" h="#h+90" align="center" alignV="center" src="bg/ma_1.9.png" alpha="225*#long_Press" />
+	</Group>
+	
+	<Group  alpha="255*#long_Press">
+		<Image x="141" y="43-300+(#h-1920)/4+330*#long_Press" align="center" alignV="center"  src="bg/left.png"/>
+		
+		<Button  x="141" y="43-300+(#h-1920)/4+330*#long_Press" w="172" h="72" align="center" alignV="center" visibility="eq(#long_Press,1)">
+			<Triggers>
+				<Trigger action="up">
+					<AnimationCommand command="play(400,800)" target="long_Press" condition="eq(#long_Press,1)*#misoperation"/>
+				</Trigger>
+			</Triggers>
+		</Button>
+		<Image x="940" y="43-300+(#h-1920)/4+330*#long_Press" align="center" alignV="center"  src="bg/right.png"/>
+		<Button  x="940" y="43-300+(#h-1920)/4+330*#long_Press" w="172" h="72" align="center" alignV="center" visibility="eq(#long_Press,1)">
+			<Triggers>
+				<Trigger action="up">
+					<AnimationCommand command="play(400,800)" target="long_Press" condition="eq(#long_Press,1)*#misoperation"/>
+					<VariableCommand name="bg" expression="#bgsz"   persist="true" condition="ne(#bgsz,8)*#misoperation"/>
+					<IntentCommand action="android.intent.action.MAIN" class="miui.maml.MamlConfigSettings" package="com.android.thememanager" condition="eq(#bgsz,8)*#misoperation">
+						<Extra expression="&apos;lockstyle&apos;" name="maml_code" type="string" />
+					</IntentCommand>
+					<IntentCommand action="android.intent.action.MAIN" class="com.miui.maml.MamlConfigSettings" package="com.android.thememanager" condition="eq(#bgsz,8)*#misoperation">
+						<Extra expression="&apos;lockstyle&apos;" name="maml_code" type="string" />
+					</IntentCommand>
+					<ExternCommand command="unlock" condition="eq(#bgsz,8)*#misoperation"/> 
+					<VariableCommand name="sceneryBg" expression="0" persist="true"  condition="eq(#bg,1)*eq(#bgsz,1)*#misoperation"/>
+				</Trigger>
+			</Triggers>
+		</Button>
+		<Image x="#w/2" y="1856+300+(#h-1920)/1.2-330*#long_Press" align="center" alignV="center"  src="bg/bott.png"/>
+		<Button  x="#w/2" y="1856+300+(#h-1920)/1.2-330*#long_Press" w="322" h="102" align="center" alignV="center" visibility="eq(#long_Press,1)">
+			<Triggers>
+				<Trigger action="up">
+					<AnimationCommand command="play(400,800)" target="long_Press" condition="eq(#long_Press,1)*#misoperation"/>
+					<VariableCommand name="setting" expression="1"   persist="true" condition="#misoperation"/>
+					<Command target="sz_an.animation" value="play" condition="#misoperation"/>
+				</Trigger>
+			</Triggers>
+		</Button>
+		
+		
+		<Button  x="#w/2" y="#h/2" w="630" h="1404" align="center" alignV="center" visibility="eq(#long_Press,1)">
+			<Triggers>
+				<Trigger action="up">
+					<AnimationCommand command="play(400,800)" target="long_Press" condition="eq(#long_Press,1)*#misoperation"/>
+					<VariableCommand name="bg" expression="#bgsz"   persist="true" condition="ne(#bgsz,8)*#misoperation"/>
+					<IntentCommand action="android.intent.action.MAIN" class="miui.maml.MamlConfigSettings" package="com.android.thememanager" condition="eq(#bgsz,8)*#misoperation">
+						<Extra expression="&apos;lockstyle&apos;" name="maml_code" type="string" />
+					</IntentCommand>
+					<IntentCommand action="android.intent.action.MAIN" class="com.miui.maml.MamlConfigSettings" package="com.android.thememanager" condition="eq(#bgsz,8)*#misoperation">
+						<Extra expression="&apos;lockstyle&apos;" name="maml_code" type="string" />
+					</IntentCommand>
+					<ExternCommand command="unlock" condition="eq(#bgsz,8)*#misoperation"/> 
+					<VariableCommand name="sceneryBg" expression="0" persist="true"  condition="eq(#bg,1)*eq(#bgsz,1)*#misoperation"/>
+				</Trigger>
+			</Triggers>
+		</Button>
+		<Image x="#w/2+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge0.png"/>
+		<Image x="#w/2+800*1+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge1.png"/>
+		<Image x="#w/2+800*2+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge2.png"/>
+		<Image x="#w/2+800*3+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge3.png"/>
+		<Image x="#w/2+800*4+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge4.png"/>
+		<Image x="#w/2+800*5+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge5.png"/>
+		<Image x="#w/2+800*6+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge6.png"/>
+		<Image x="#w/2+800*7+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center"  src="bg/bge7.png"/>
+		
+		<Rectangle x="#w/2+800*8+#slidex" y="#h/2" w="630" h="1404" align="center" alignV="center" fillColor="#333333" cornerRadius="100" cap="round" alpha="255"/>
+		
+		<Image x="#w/2+800*8+#slidex" y="#h/2" w="102" h="102" align="center" alignV="center"  src="bg/cent.png"/>
+		<Text x="#w/2+800*8+#slidex" y="#h/2+120" align="center" alignV="center" color="#ffffff" size="55" text="Custom" bold="true" alpha="255"/>
+		
+		<Text x="#w/2" y="-50+330*#long_Press" align="center" alignV="center" color="#ffffff" size="55" text="Lock screen" bold="true" alpha="255"/>
+		
+		<Button x="0" y="0" w="#w" h="#h" visibility="eq(#long_Press,1)">
+			<Triggers>
+				<Trigger action="down">
+					<VariableCommand name="mx" expression="#slidex" persist="true" />
+					<VariableCommand name="str" expression="1" persist="true" />
+				</Trigger>
+				<Trigger action="up,cancel">
+					<VariableCommand name="mx" expression="ifelse(ge(#mx+#mox*2,0),0,le(#mx+#mox*2,-6400),-6400,#mx+#mox*2)" persist="true"/>
+					<VariableCommand name="bgsz" expression="round((abs(#mx)/800))" persist="true" />
+					<VariableCommand name="bgszcd" expression="#bgsz*800" persist="true" />
+					<VariableCommand name="mxationSet" expression="ifelse(gt(abs(#mx),#bgszcd),1,lt(abs(#mx),#bgszcd),2,0)" />
+					<VariableCommand name="mxation" expression="ifelse(eq(#mxationSet,1),abs(#mx%800)+#sd1,eq(#mxationSet,2),800-abs(#mx%800)+#sd1,0)" />
+					<VariableCommand name="str" expression="0" persist="true" />
+				</Trigger>
+			</Triggers>
+		</Button>
+		<Var name="sd1">
+			<VariableAnimation>
+				<AniFrame value="0" time="0" />
+				<AniFrame value="1000000" time="1000000" />
+			</VariableAnimation>
+		</Var>
+		<Var name="abcb1" expression="max(#mxation-#sd1,0)" />
+		<Var name="abcb2" expression="ifelse(eq(#mxationSet,1),#abcb1,eq(#mxationSet,2),#abcb1*-1,0)" />
+		<Var name="slidex"  expression="ifelse(#str,ifelse(ge(#mx+#mox*2,0),0,le(#mx+#mox*2,-6400),-6400,#mx+#mox*2),(#bgszcd+#abcb2)*-1)" />
+	</Group>
+	
+	
+	<Button h="#screen_height" w="1080" visibility="eq(#notice_down,0)*eq(#setting,0)">
+		<Triggers>
+		  <Trigger action="up,cancel">
+			<ExternCommand command="unlock" condition="#touch_begin_y-#touch_y}300"/>
+		  </Trigger>
+		</Triggers>
+	</Button>
+</Lockscreen>
+
+	
+	  
+
+	  
+	  
+	  
+	
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  

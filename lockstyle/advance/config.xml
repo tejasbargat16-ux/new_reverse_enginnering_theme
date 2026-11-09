@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config>
+    <Group text="Custom Wallpaper">
+        <CheckBox text="Custom Wallpaper" summary="After enabling, failure to select a wallpaper will cause a black screen. Disable custom wallpaper to restore." id="custom_bg" default="0"/>
+        <ImagePicker text="Select Wallpaper" summary="Recommended image size: 1080x1920" id="bg_img"/>
+        <ImagePicker text="Select Depth Wallpaper" summary="Do not select non-depth wallpapers here, otherwise it may obscure the clock." id="bg_img2"/>
+    </Group>
+</Config>

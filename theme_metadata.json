@@ -1,0 +1,204 @@
+{
+  "localId": "6a43b777-09e7-4550-a998-8f1b93037c5b",
+  "onlineId": "33625be0-15fa-48f1-9e24-528816372227",
+  "assemblyId": "881edb5e-033a-4978-9abe-a2c4d4bb6016",
+  "productId": "881edb5e-033a-4978-9abe-a2c4d4bb6016",
+  "hash": "7e5a63e061746a8eda3ed1211750cc2361de0827",
+  "platform": 17,
+  "size": 52840466,
+  "updatedTime": 1406786563035,
+  "version": "1.0",
+  "authors": {
+    "en_US": "@HyperOSsignals",
+    "zh_CN": "@HyperOSsignals",
+    "fallback": "@HyperOSsignals"
+  },
+  "designers": {
+    "en_US": "Mydul Islam",
+    "zh_CN": "Mydul Islam",
+    "fallback": "Mydul Islam"
+  },
+  "titles": {
+    "en_US": "Dark HOS3",
+    "zh_CN": "Dark HOS3",
+    "fallback": "Dark HOS3"
+  },
+  "descriptions": {
+    "en_US": "Telegram Channel : https://t.me/HyperosSignals\n\nHaving any issues with this theme? Join our Telegram channel and let us know-we'll fix it quickly. For more premium themes, stay connected with us",
+    "fallback": ""
+  },
+  "builtInThumbnails": {
+    "en_US": [
+      "en_US_lockscreen_0.jpg",
+      "en_US_launcher_0.jpg",
+      "en_US_launcher_1.jpg",
+      "en_US_statusbar_0.jpg",
+      "en_US_icons_0.jpg",
+      "en_US_icons_1.jpg",
+      "en_US_icons_2.jpg",
+      "en_US_icons_2x3_0.jpg",
+      "en_US_icons_4x3_0.jpg"
+    ]
+  },
+  "builtInPreviews": {
+    "en_US": [
+      "en_US_lockscreen_0.jpg",
+      "en_US_launcher_0.jpg",
+      "en_US_launcher_1.jpg",
+      "en_US_statusbar_0.jpg",
+      "en_US_icons_0.jpg",
+      "en_US_icons_1.jpg",
+      "en_US_icons_2.jpg",
+      "en_US_icons_2x3_0.jpg",
+      "en_US_icons_4x3_0.jpg"
+    ]
+  },
+  "thumbnails": [
+    {
+      "localPath": "0d5104b2dc0804a4c84ceb9d365b063b32883eeba",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w321q90/ThemeMarket/0d5104b2dc0804a4c84ceb9d365b063b32883eeba"
+    }
+  ],
+  "previews": [
+    {
+      "localPath": "0d5104b2dc0804a4c84ceb9d365b063b32883eeba",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/0d5104b2dc0804a4c84ceb9d365b063b32883eeba"
+    },
+    {
+      "localPath": "0589e097ee3cc4bffa8c122f02e1df71d493c6f9c",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/0589e097ee3cc4bffa8c122f02e1df71d493c6f9c"
+    },
+    {
+      "localPath": "0c26479908240480dbf9eac74a98d91bffb3e0dd6",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/0c26479908240480dbf9eac74a98d91bffb3e0dd6"
+    },
+    {
+      "localPath": "097e8a324c0f5433b86c280044063344f28de5e1c",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/097e8a324c0f5433b86c280044063344f28de5e1c"
+    },
+    {
+      "localPath": "0751ab3a30d8948178acdf6b7d978c56ee7d1ff45",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/0751ab3a30d8948178acdf6b7d978c56ee7d1ff45"
+    },
+    {
+      "localPath": "0c1401d9d0ac64d3b9c5c692d5e508b7422235924",
+      "onlinePath": "https://t17.market.mi-img.com/thumbnail/webp/w1080q70/ThemeMarket/0c1401d9d0ac64d3b9c5c692d5e508b7422235924"
+    }
+  ],
+  "parentResources": [],
+  "subResources": [
+    {
+      "localId": "bd5d4219-848b-482c-aaed-a95dbf3f06d6",
+      "resourceCode": "contact",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "56731112-a0b0-47b0-ae9a-d0948d4309d6",
+      "resourceCode": "wallpaper",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "90ebacc2-90f3-422e-930a-6e6095e2e9a7",
+      "resourceCode": "lockstyle",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "bc5aca4c-5764-43c8-abd3-15b309735e28",
+      "resourceCode": "mms",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "2f5cf692-3ff6-4c15-a763-9321b5a7bfde",
+      "resourceCode": "launcher",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "132825ae-aa51-49aa-80cc-52b93802324c",
+      "resourceCode": "statusbar",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "0b728728-a1b3-43dc-a01b-2e7fe1150e4d",
+      "resourceCode": "lockscreen",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "16e59593-32de-4996-a1ea-22d032c9aa7c",
+      "resourceCode": "com.android.settings",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "98d6e394-b81f-4e82-8eba-b93d93e1f4cd",
+      "resourceCode": "miui.systemui.plugin",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "8405855e-9622-4df6-a6cc-c7c40959af71",
+      "resourceCode": "com.android.phone",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "24caa048-a174-43e6-925f-d7cdef2eff40",
+      "resourceCode": "com.miui.securitycenter",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "c8f6b670-3391-4726-9fc4-e25360e40a7b",
+      "resourceCode": "icons",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "74f70bee-3e28-4995-8267-0447f06fc6e8",
+      "resourceCode": "clock_2x4",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "76090f2c-d9b9-443e-9d42-dce3ff2683c7",
+      "resourceCode": "com.mi.android.globallauncher",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    },
+    {
+      "localId": "f41247da-b5b4-48a4-a070-61bfbfd921b8",
+      "resourceCode": "com.android.incallui",
+      "extraMeta": {},
+      "metaPath": null,
+      "contentPath": null
+    }
+  ],
+  "extraMeta": {},
+  "metaPath": null,
+  "contentPath": null,
+  "rightsPath": null,
+  "screenRatio": null,
+  "fontWeight": null,
+  "miuiAdapterVersion": 3.200000047683716,
+  "wallpaperStyle": 0
+}

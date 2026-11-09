@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<MIUI_Theme_Values template="DarkTemplate">
+<!-- by 嗷嗷程 -->
+
+<!--图标-->
+<dimen name="icon_title_margin_top">4.5dp</dimen>图标标题字体上边距
+
+<!--文件夹 OnePlus Nord 风格-->
+<dimen name="folder_bottom_padding">60dip</dimen>文件夹下边距
+<dimen name="folder_preview_top_margin">14.000000dp</dimen> 文件夹边距
+<dimen name="folder_title_text_size">18sp</dimen>
+<dimen name="folder_title_padding_top">14dp</dimen>
+<dimen name="folder_title_padding_bottom">10dp</dimen>
+<color name="folder_title_color">#ffffffff</color>
+<color name="folder_title_color_dark">#ffffffff</color>
+<color name="folder_title_color_light">#ff12161c</color>
+<color name="folder_stroke_color">#5900e5ff</color>
+<dimen name="folder_stroke_width">1.5dp</dimen>
+
+<!--最近任务视图-->
+<dimen name="recents_task_view_header_title_text_size">16sp</dimen>最近任务预览图圆角最大值
+<dimen name="recents_task_view_header_height">40dp</dimen>最近任务预览图标题高度
+
+<!-- 浅色模式次要颜色 -->
+<color name="miuix_appcompat_edit_text_search_hint_color_light" >#80000000</color>
+<color name="miuix_appcompat_dialog_default_message_text_color_light" >#80000000</color>
+<color name="miuix_preference_right_text_color_normal_light" >#80000000</color>
+<color name="miuix_preference_secondary_text_color_light" >#80000000</color>
+<color name="miuix_preference_category_text_color_light" >#80000000</color>
+<color name="miuix_appcompat_text_color_primary_light" >#80000000</color>
+<color name="miuix_appcompat_hint_edit_text_color_light" >#80000000</color>
+<color name="miuix_appcompat_integrated_spinner_text_color_normal_light" >#80000000</color>
+<color name="miuix_appcompat_integrated_spinner_text_color_pressed_light" >#80000000</color>
+<color name="miuix_appcompat_list_secondary_text_color_normal_light" >#80000000</color>
+<color name="miuix_appcompat_list_secondary_text_color_pressed_light" >#80000000</color>
+<color name="miuix_appcompat_dialog_default_hint_edit_text_color_light" >#80000000</color>
+<color name="miuix_preference_connect_summary_disconnected_color_light" >#80000000</color>
+<color name="miuix_appcompat_action_bar_subtitle_text_light" >#80000000</color>
+<color name="miuix_appcompat_arrow_right_normal_fill_color_light" >#80000000</color>
+<color name="miuix_appcompat_arrow_right_pressed_fill_color_light" >#80000000</color>
+<color name="anc_text_unselect_color" >#80000000</color>
+<color name="miuix_appcompat_dialog_default_checkbox_text_color_light" >#80000000</color>
+<color name="list_secondary_text_color_normal_light" >#80000000</color>
+<color name="unlock_text_light" >#80000000</color>
+<color name="miuix_appcompat_filter_sort_tab_view2_text_normal_light" >#80000000</color>
+<color name="choose_password_forget_text_color_light" >#80000000</color>
+<!-- 深色模式次要颜色 -->
+<color name="miuix_appcompat_edit_text_search_hint_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_dialog_default_message_text_color_dark" >#99ffffff</color>
+<color name="miuix_preference_right_text_color_normal_dark" >#99ffffff</color>
+<color name="miuix_preference_secondary_text_color_dark" >#99ffffff</color>
+<color name="miuix_preference_category_text_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_text_color_primary_dark" >#99ffffff</color>
+<color name="miuix_appcompat_hint_edit_text_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_integrated_spinner_text_color_normal_dark" >#99ffffff</color>
+<color name="miuix_appcompat_integrated_spinner_text_color_pressed_dark" >#99ffffff</color>
+<color name="miuix_appcompat_list_secondary_text_color_normal_dark" >#99ffffff</color>
+<color name="miuix_appcompat_list_secondary_text_color_pressed_dark" >#99ffffff</color>
+<color name="miuix_appcompat_dialog_default_hint_edit_text_color_dark" >#99ffffff</color>
+<color name="miuix_preference_connect_summary_disconnected_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_action_bar_subtitle_text_dark" >#99ffffff</color>
+<color name="miuix_appcompat_arrow_right_normal_fill_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_arrow_right_pressed_fill_color_dark" >#99ffffff</color>
+<color name="miuix_appcompat_dialog_default_checkbox_text_color_dark" >#99ffffff</color>
+<color name="list_secondary_text_color_normal_dark" >#99ffffff</color>
+<color name="unlock_text_dark" >#99ffffff</color>
+<color name="miuix_appcompat_filter_sort_tab_view2_text_normal_dark" >#99ffffff</color>
+<color name="choose_password_forget_text_color_dark" >#99ffffff</color>
+
+<!-- 浅色模式特定参数，和大背景色一样的全部替换，系统的#fff7f7f7改为#fff2f2f6 -->
+<color name="account_and_sync_item_bg">#fff2f2f6</color>
+<color name="haptic_radio_preference_bg_unselected_color">#fff2f2f6</color>
+<color name="miuix_appcompat_water_box_bg_color">#fff2f2f6</color>
+<color name="miuix_color_black_solid_10">#fff2f2f6</color>
+<color name="miuix_usb_dialog_bg_color">#fff2f2f6</color>
+<color name="new_recyclerview_background">#fff2f2f6</color>
+<color name="progress_card_view_background_color">#fff2f2f6</color>
+<color name="qrcode_other_color">#fff2f2f6</color>
+<color name="usage_stats_remind_bg">#fff2f2f6</color>
+<color name="voice_access_radio_preference_bg_unselected_color">#fff2f2f6</color>
+<!-- 深色模式特定参数-->
+<color name="miuix_recyclerview_card_group_background_dark">#ff1c1c1e</color>首页列表背景颜色
+
+<!-- 首页列表 -->
+<dimen name="header_icon_size">28.8dp</dimen>首选项图标大小
+<dimen name="miuix_preference_item_padding_top">19dip</dimen>首选项填充顶部
+<dimen name="miuix_preference_item_padding_bottom">19dip</dimen>首选项填充底部
+<dimen name="miuix_preference_item_padding_inner">14.0dip</dimen>首选项填充内部
+<dimen name="miuix_preference_icon_padding_end"></dimen>首选项图标填充结尾
+<dimen name="miuix_preference_right_text_size">17.0sp</dimen>首页列表右侧文字大小
+<dimen name="miuix_recyclerview_card_group_margin_bottom">5.0dp</dimen>
+<dimen name="miuix_recyclerview_card_group_margin_end">16.0dp</dimen>
+<dimen name="miuix_recyclerview_card_group_margin_start">16.0dp</dimen>
+<dimen name="miuix_recyclerview_card_group_margin_top">30.0dp</dimen>
+<dimen name="miuix_recyclerview_card_group_radius">26dp</dimen>首页列表圆角（原16dip）
+<!-- 同化与原首页列表左右间距12dip一样的数值 -->
+<dimen name="select_dialog_item_margin_start">16.0dp</dimen>
+<dimen name="select_dialog_item_margin_end">16.0dp</dimen>
+<dimen name="headset_find_device_card_family_margin_start">16.0dp</dimen>
+<dimen name="headset_find_device_card_family_margin_end">16.0dp</dimen>
+
+<!-- 同化源代码≥11dp -->
+<dimen name="control_center_preference_checkbox_corner_radius">26dp</dimen>11.6362915dp
+<dimen name="video_radius">26dp</dimen>11.599976dp
+<dimen name="visual_text_radius">26dp</dimen>11.639984dp
+<!-- 同化源代码≥12dp -->
+<dimen name="dark_mode_picture_radius">26dp</dimen>
+<dimen name="font_checkbox_radius">26dp</dimen>
+<dimen name="miuix_appcompat_floating_window_round_corner_radius">26dp</dimen>
+<dimen name="preview_lock_screen_radius">26dp</dimen>
+<dimen name="miuix_theme_radius_small">26dp</dimen>
+<!-- 同化源代码≥13dp -->
+<dimen name="fimreware_save_update_notification_button_radius">10sp</dimen>
+<dimen name="mtrl_slider_label_radius">26dp</dimen>
+<!-- 同化与原首页列表圆角半径(16dp)一样的数值 -->
+<dimen name="button_background_corner_radius">26dp</dimen>
+<dimen name="card_background_radius">26dp</dimen>
+<dimen name="choose_unlock_bg_radius">26dp</dimen>
+<dimen name="miui_gxzw_anim_outer_radius">26dp</dimen>
+<dimen name="miuix_appcompat_button_bg_corner_radius">26dp</dimen>
+<dimen name="miuix_appcompat_dialog_edit_text_radius">26dp</dimen>
+<dimen name="miuix_appcompat_round_corner_radius">26dp</dimen>
+<dimen name="miuix_appcompat_suspend_menu_bg_radius">26dp</dimen>
+<dimen name="miuix_popup_window_background_radius">26dp</dimen>
+<dimen name="miuix_recyclerview_card_group_radius">26dp</dimen>
+<dimen name="provision_preference_wifi_high_light_radius">26dp</dimen>
+<dimen name="sos_common_radius">26dp</dimen>
+<dimen name="miuix_theme_radius_common">26dp</dimen>
+<!-- 同化源代码≥17dp -->
+<dimen name="font_bubble_radius">26dp</dimen>17.449982dp
+<dimen name="input_method_manage_item_corner_radius">26dp</dimen>17.5dp
+<dimen name="main_video_bg_radius">26dp</dimen>17.0dp
+<dimen name="miuix_appcompat_spinner_round_corner_radius">26dp</dimen>17.449982dp
+<dimen name="miuix_appcompat_suspend_menu_mi_shadow_radius">26dp</dimen>17.0dp
+<dimen name="miuix_waterbox_round_corner_radius">26dp</dimen>17.449982dp
+<!-- 同化与 WLAN／蓝牙 卡片背景圆角半径(18dp)一样的数值 -->
+<dimen name="miuix_preference_high_dark_radius">26dp</dimen>
+<dimen name="checkbox_radius">26dp</dimen>
+<dimen name="color_preview_radius">26dp</dimen>
+<dimen name="miuix_appcompat_dialog_edit_text_border_radius">26dp</dimen>
+<dimen name="mtrl_progress_circular_radius">26dp</dimen>
+<dimen name="visual_box_border_radius">26dp</dimen>
+<!-- 同化源代码≥20dp -->
+<dimen name="contrast_button_radius">26dp</dimen>
+<dimen name="miui_gxzw_anim_inner_radius">26dp</dimen>
+<dimen name="my_device_card_background_radius">26dp</dimen>
+<dimen name="provision_preference_high_light_radius">26dp</dimen>
+<dimen name="screen_effect_btn_radius">26dp</dimen>
+<dimen name="settingslib_preference_corner_radius">26dp</dimen>
+<!-- 同化源代码≥24dp -->
+<dimen name="miuix_appcompat_list_menu_bg_header_radius">26dp</dimen>
+<dimen name="miuix_default_card_shadow_radius">26dp</dimen>
+<dimen name="mtrl_slider_halo_radius">26dp</dimen>
+<!-- 同化源代码≥28dp -->
+<dimen name="accessibility_illustration_view_radius">26dp</dimen>
+<dimen name="button_corner_radius">26dp</dimen>
+<dimen name="dream_item_corner_radius">26dp</dimen>
+<dimen name="homepage_preference_corner_radius">26dp</dimen>
+<dimen name="keyboard_picker_radius">26dp</dimen>
+<dimen name="search_bar_corner_radius">26dp</dimen>
+<dimen name="settings_panel_corner_radius">26dp</dimen>
+<dimen name="settingslib_dialogCornerRadius">26dp</dimen>
+<dimen name="settingslib_switch_bar_radius">26dp</dimen>
+<dimen name="sud_edit_text_corner_radius">26dp</dimen>
+<dimen name="sud_glif_device_default_dialog_corner_radius">26dp</dimen>
+
+<!-- Button -->
+<dimen name="miuix_appcompat_sliding_button_height">32dip</dimen>
+<dimen name="miuix_appcompat_sliding_button_width">52dip</dimen>
+<dimen name="miuix_appcompat_sliding_button_slider_size">28dip</dimen>
+<dimen name="miuix_appcompat_sliding_button_frame_vertical_padding">12.84dp</dimen>
+<dimen name="miuix_appcompat_sliding_button_mask_vertical_padding">12.84dp</dimen>
+<dimen name="miuix_appcompat_sliding_button_slider_horizontal_padding">2dp</dimen>
+<dimen name="miuix_appcompat_sliding_button_slider_max_offset">2dip</dimen>
+<dimen name="miuix_appcompat_sliding_button_slider_vertical_padding">5dip</dimen>
+<dimen name="sliding_button_border">0.3dp</dimen>
+<dimen name="miuix_appcompat_sliding_button_frame_corner_radius">30dip</dimen>
+<dimen name="miuix_appcompat_sliding_button_mask_vertical_padding">20dp</dimen>开关往内高度
+<dimen name="miuix_appcompat_sliding_button_frame_corner_radius">20dp</dimen>背景圆角
+<dimen name="miuix_appcompat_sliding_button_frame_vertical_padding">20dp</dimen>开关往外高度
+<dimen name="miuix_appcompat_sliding_button_slider_size">21dp</dimen>滑块大小
+<dimen name="miuix_appcompat_sliding_button_slider_max_offset">0dp</dimen>
+<dimen name="sliding_button_border">-1dp</dimen>
+<dimen name="miuix_appcompat_sliding_button_slider_horizontal_padding">2dp</dimen>
+<dimen name="miuix_appcompat_action_bar_horizontal_padding_start">10dp</dimen>
+<color name="miuix_appcompat_sliding_button_bar_on_light">#ff34c759</color>
+<color name="miuix_appcompat_sliding_button_bar_on_dark">#ff30d158</color>
+<color name="miuix_color_blue_light_primary_default">#ff007aff</color>
+<color name="miuix_color_blue_dark_primary_default">#ff0a84ff</color>
+<color name="sliding_btn_slider_off_normal_color_dark" package="miui">#ffffffff</color>
+<color name="sliding_btn_slider_off_pressed_color_dark" package="miui">#ffffffff</color>
+<color name="sliding_btn_slider_on_normal_color_dark" package="miui">#ffffffff</color>
+<color name="sliding_btn_slider_on_pressed_color_dark" package="miui">#ffffffff</color>
+</MIUI_Theme_Values>

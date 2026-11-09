@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<MIUI_Theme_Values template="DarkTemplate">
+
+  
+  <dimen name="miui_volume_column_height">160dp</dimen>
+
+<integer name="window_translucent_status">2</integer></MIUI_Theme_Values>

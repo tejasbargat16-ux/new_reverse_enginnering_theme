@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<MIUI_Theme_Values>
+    <!-- 头像 -->
+    <drawable name="ic_contact_list_picture2.png">ic_contact_list_picture.png</drawable>
+    <drawable name="ic_contact_list_picture3.png">ic_contact_list_picture.png</drawable>
+    <drawable name="ic_contact_list_picture4.png">ic_contact_list_picture.png</drawable>
+    <drawable name="ic_contact_sp_picture.png">ic_contact_list_picture.png</drawable>
+    <drawable name="ic_contact_unknown_picture.png">ic_contact_list_picture.png</drawable>
+    <drawable name="ic_contact_group_photo.png">ic_contact_list_picture.png</drawable>
+    <!-- 顶栏 -->
+    <drawable name="miuix_appcompat_search_mode_input_bg_light.9.png">miuix_appcompat_action_mode_bg_light.9.png</drawable>
+    <drawable name="miuix_appcompat_action_bar_bg_light.9.png">miuix_appcompat_action_mode_bg_light.9.png</drawable>
+    <!-- 背景 -->
+    <drawable name="contact_edit_content_bg.9.png">miuix_appcompat_window_bg_light.9.png</drawable>
+    <!-- 联系人 空页面 -->
+    <drawable name="list_empty_no_contact.png">no_contact.png</drawable>
+    <!-- 通话记录 空页面 -->
+    <drawable name="list_empty_no_call_log.png">no_call_log.png</drawable>
+
+    <!-- 联系人 多选 搜索条 -->
+    <drawable name="search_mode_edit_text_bg_light.9.png">miuix_appcompat_search_mode_edit_text_bg_light.9.png</drawable>
+    <!-- 底tab icon -->
+    <!-- <drawable name="ic_bottom_tab_dial_selected.png">ic_bottom_tab_dial.png</drawable> -->
+    <!-- <drawable name="ic_bottom_tab_contacts_selected.png">ic_bottom_tab_contacts.png</drawable> -->
+    <!-- <drawable name="ic_bottom_tab_business_selected.png">ic_bottom_tab_business.png</drawable> -->
+</MIUI_Theme_Values>

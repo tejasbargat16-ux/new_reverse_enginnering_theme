@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MIUI_Theme_Values template="DarkTemplate">
+
+  <bool name="default_theme" >false</bool>
+  <bool name="status_bar_color_enable" >false</bool>
+  <bool name="status_bar_color_white" >true</bool>
+
+</MIUI_Theme_Values>
