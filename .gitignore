@@ -1,3 +1,6 @@
+# Build outputs
+*.mtz
+
 # Python
 __pycache__/
 *.py[cod]
